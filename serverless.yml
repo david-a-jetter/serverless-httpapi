@@ -1,0 +1,87 @@
+service: hearty
+configValidationMode: warn
+
+plugins:
+ - serverless-python-requirements
+ - serverless-prune-plugin
+
+custom:
+  pythonRequirements:
+    pythonBin: C:\Users\David\.pyenv\pyenv-win\shims\python.bat
+  prune:
+    automatic: true
+    number: 3
+
+provider:
+  name: aws
+  runtime: python3.8
+  memorySize: 128
+  environment:
+    DOMAIN_SUFFIX: hearty-${opt:stage, self:provider.stage}
+  httpApi:
+    authorizers:
+      serviceAuthorizer:
+        identitySource: $request.header.Authorization
+        issuerUrl:
+          Fn::Join:
+            - ''
+            - - 'https://cognito-idp.'
+              - '${opt:region, self:provider.region}'
+              - '.amazonaws.com/'
+              - Ref: serviceUserPool
+        audience:
+          - Ref: serviceUserPoolClient
+package:
+  patterns:
+    - src/**
+
+resources:
+  Resources:
+    HttpApi:
+      DependsOn: serviceUserPool
+    serviceUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: service-user-pool-${opt:stage, self:provider.stage}
+        UsernameAttributes:
+          - email
+        AutoVerifiedAttributes:
+          - email
+    serviceUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: service-user-pool-client-${opt:stage, self:provider.stage}
+        AllowedOAuthFlows:
+          - implicit
+        AllowedOAuthFlowsUserPoolClient: true
+        AllowedOAuthScopes:
+          - phone
+          - email
+          - openid
+          - profile
+          - aws.cognito.signin.user.admin
+        UserPoolId:
+          Ref: serviceUserPool
+        CallbackURLs:
+          - https://localhost:3000
+        ExplicitAuthFlows:
+          - ALLOW_USER_SRP_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+        GenerateSecret: false
+        SupportedIdentityProviders:
+          - COGNITO
+    serviceUserPoolDomain:
+      Type: AWS::Cognito::UserPoolDomain
+      Properties:
+        UserPoolId:
+          Ref: serviceUserPool
+        Domain: service-user-pool-domain-${opt:stage, self:provider.stage}-${self:provider.environment.DOMAIN_SUFFIX}
+
+functions:
+  echo:
+    handler: src.lambdas.echo.echo
+    events:
+      - httpApi:
+          authorizer: serviceAuthorizer
+          path: /echo
+          method: post

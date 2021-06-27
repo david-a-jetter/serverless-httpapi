@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "hearty"
+version = "0.1.0"
+description = ""
+authors = ["David Jetter <davidajetter@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pydantic = "^1.8.2"
+python-json-logger = "^2.0.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.4"
+black = "^21.6b0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
