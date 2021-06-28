@@ -35,4 +35,4 @@ Serverless is installed as a **local** NPM package, and therefore should be invo
 A list of things likely related to this development initiating on a Windows 10 machine.
 
 1. `pythonBin` in [serverless.yml](./serverless.yml) to get `serverless-python-requirements` to work
-1. Editing of `poetry.js` from `serverless-python-requirements` per (this GitHub issue)[https://github.com/UnitedIncome/serverless-python-requirements/issues/609]
+1. Editing of `poetry.js` from `serverless-python-requirements` per [this GitHub issue](https://github.com/UnitedIncome/serverless-python-requirements/issues/609)
