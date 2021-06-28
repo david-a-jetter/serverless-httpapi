@@ -33,7 +33,7 @@ provider:
           - Ref: serviceUserPoolClient
 package:
   patterns:
-    - src/**
+    - hearty/**
 
 resources:
   Resources:
@@ -79,7 +79,7 @@ resources:
 
 functions:
   echo:
-    handler: src.lambdas.echo.echo
+    handler: hearty.lambdas.echo.echo
     events:
       - httpApi:
           authorizer: serviceAuthorizer
