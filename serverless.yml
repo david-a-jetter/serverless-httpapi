@@ -7,6 +7,10 @@ plugins:
 
 custom:
   pythonRequirements:
+    dockerizePip: true
+    slim: true
+    slimPatterns:
+      - '**/*.so'
     pythonBin: C:\Users\David\.pyenv\pyenv-win\shims\python.bat
   prune:
     automatic: true
@@ -33,6 +37,7 @@ provider:
           - Ref: serviceUserPoolClient
 package:
   patterns:
+    - '!./**'
     - hearty/**
 
 resources:
