@@ -4,6 +4,14 @@ from typing import List
 from pydantic import BaseModel, Field
 
 
+class Personalinfo(BaseModel):
+    # https://cloud.ouraring.com/docs/personal-info
+    age: int
+    weight: int
+    gender: str
+    email: str
+
+
 class Readiness(BaseModel):
     # https://cloud.ouraring.com/docs/readiness
     summary_date: date
@@ -72,6 +80,7 @@ class RestMode(IntEnum):
     ENTERING_RECOVERY = 3
     RECOVERING = 4
 
+
 class Activity(BaseModel):
     # https://cloud.ouraring.com/docs/activity
     summary_date: date
@@ -105,12 +114,12 @@ class Activity(BaseModel):
     class_5min: str = Field(
         ...,
         description="A string that contains one character for each starting five minutes of the activity period, "
-                    "so that the first period starts from 4 AM local time. Enum of range of values is ActivityClass",
+        "so that the first period starts from 4 AM local time. Enum of range of values is ActivityClass",
     )
     met_1min: List[float] = Field(
         ...,
         description="Average MET level for each minute of the activity period, "
-                    "starting from 4 AM local time."
+        "starting from 4 AM local time.",
     )
     rest_mode_state: RestMode
 
