@@ -1,20 +1,12 @@
-service: hearty
+service: ${self:custom.common.service}
 configValidationMode: warn
 
-plugins:
- - serverless-python-requirements
- - serverless-prune-plugin
+plugins: ${self:custom.common.plugins}
 
 custom:
-  pythonRequirements:
-    dockerizePip: true
-    slim: true
-    slimPatterns:
-      - '**/*.so'
-    pythonBin: C:\Users\David\.pyenv\pyenv-win\shims\python.bat
-  prune:
-    automatic: true
-    number: 3
+  common: ${file(serverless.common.yml)}
+  pythonRequirements: ${self:custom.common.pythonRequirements}
+  prune: ${self:custom.common.prune}
 
 provider:
   name: aws

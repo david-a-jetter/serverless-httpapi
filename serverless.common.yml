@@ -1,0 +1,16 @@
+service: hearty
+configValidationMode: warn
+plugins:
+ - serverless-python-requirements
+ - serverless-prune-plugin
+
+pythonRequirements:
+  dockerizePip: true
+  slim: true
+  slimPatterns:
+   - '**/*.so'
+  pythonBin: C:\Users\David\.pyenv\pyenv-win\shims\python.bat
+
+prune:
+  automatic: true
+  number: 3

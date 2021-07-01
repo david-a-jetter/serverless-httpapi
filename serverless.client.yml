@@ -1,0 +1,18 @@
+service: ${self:custom.common.service}-client
+configValidationMode: warn
+
+plugins: ${self:custom.common.plugins}
+
+custom:
+  common: ${file(serverless.common.yml)}
+  pythonRequirements: ${self:custom.common.pythonRequirements}
+  prune: ${self:custom.common.prune}
+
+provider:
+  name: aws
+  runtime: python3.8
+  memorySize: 128
+package:
+  patterns:
+    - '!./**'
+    - hearty/**
