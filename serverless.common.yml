@@ -14,3 +14,13 @@ pythonRequirements:
 prune:
   automatic: true
   number: 3
+
+package:
+  patterns:
+    - '!./**'
+    - hearty/**
+
+provider:
+  name: aws
+  runtime: python3.8
+  memorySize: 128

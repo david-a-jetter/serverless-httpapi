@@ -8,10 +8,12 @@ custom:
   pythonRequirements: ${self:custom.common.pythonRequirements}
   prune: ${self:custom.common.prune}
 
+package: ${self:custom.common.package}
+
 provider:
-  name: aws
-  runtime: python3.8
-  memorySize: 128
+  name: ${self:custom.common.provider.name}
+  runtime: ${self:custom.common.provider.runtime}
+  memorySize: ${self:custom.common.provider.memorySize}
   environment:
     DOMAIN_SUFFIX: hearty-${opt:stage, self:provider.stage}
   httpApi:
@@ -27,10 +29,6 @@ provider:
               - Ref: serviceUserPool
         audience:
           - Ref: serviceUserPoolClient
-package:
-  patterns:
-    - '!./**'
-    - hearty/**
 
 resources:
   Resources:

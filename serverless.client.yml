@@ -8,11 +8,12 @@ custom:
   pythonRequirements: ${self:custom.common.pythonRequirements}
   prune: ${self:custom.common.prune}
 
-provider:
-  name: aws
-  runtime: python3.8
-  memorySize: 128
 package:
   patterns:
     - '!./**'
     - hearty/**
+
+provider:
+  name: ${self:custom.common.provider.name}
+  runtime: ${self:custom.common.provider.runtime}
+  memorySize: ${self:custom.common.provider.memorySize}
