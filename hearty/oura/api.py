@@ -1,10 +1,17 @@
+import logging
+from abc import ABC, abstractmethod
 from datetime import date, datetime
 from enum import IntEnum, Enum
 from typing import List
 from pydantic import BaseModel, Field
+from requests import Session, HTTPError
+
+from hearty.utils.requests_utils import mount_logging_adapters
+
+logger = logging.getLogger(__name__)
 
 
-class Personalinfo(BaseModel):
+class PersonalInfo(BaseModel):
     # https://cloud.ouraring.com/docs/personal-info
     age: int
     weight: int
@@ -12,7 +19,14 @@ class Personalinfo(BaseModel):
     email: str
 
 
-class Readiness(BaseModel):
+class DatedBaseModel(ABC, BaseModel):
+    @abstractmethod
+    @property
+    def date_key(self) -> date:
+        pass
+
+
+class Readiness(DatedBaseModel):
     # https://cloud.ouraring.com/docs/readiness
     summary_date: date
     period_id: int
@@ -27,8 +41,12 @@ class Readiness(BaseModel):
     score_temperature: int
     rest_mode_state: int
 
+    @property
+    def date_key(self) -> date:
+        return self.summary_date
 
-class Sleep(BaseModel):
+
+class Sleep(DatedBaseModel):
     # https://cloud.ouraring.com/docs/sleep
     summary_date: date
     period_id: int
@@ -63,6 +81,10 @@ class Sleep(BaseModel):
     hr_5min: List[int]
     rmssd_5min: List[int]
 
+    @property
+    def date_key(self) -> date:
+        return self.summary_date
+
 
 class ActivityClass(IntEnum):
     NON_WEAR = 0
@@ -81,7 +103,7 @@ class RestMode(IntEnum):
     RECOVERING = 4
 
 
-class Activity(BaseModel):
+class Activity(DatedBaseModel):
     # https://cloud.ouraring.com/docs/activity
     summary_date: date
     day_start: datetime
@@ -123,6 +145,10 @@ class Activity(BaseModel):
     )
     rest_mode_state: RestMode
 
+    @property
+    def date_key(self) -> date:
+        return self.summary_date
+
 
 class BedtimeWindow(BaseModel):
     start: int
@@ -135,8 +161,42 @@ class BedTimeStatus(Enum):
     IDEAL_BEDTIME_AVAILABLE = "IDEAL_BEDTIME_AVAILABLE"
 
 
-class IdealBedtime(BaseModel):
+class IdealBedtime(DatedBaseModel):
     # https://cloud.ouraring.com/docs/bedtime
     date: date
     bedtime_window: BedtimeWindow
     status: BedTimeStatus
+
+    @property
+    def date_key(self) -> date:
+        return self.date
+
+
+class OuraApiAccess:
+    class OuraResources(Enum):
+        AccessToken = "oauth/token"
+        PersonalInfo = "v1/userinfo"
+        Sleep = "v1/sleep"
+        Activity = "v1/activity"
+        Readiness = "v1/readiness"
+
+    _API_HOST = "https://api.ouraring.com/"
+
+    @classmethod
+    def build(cls):
+        session = Session()
+        mount_logging_adapters(session)
+        return cls(session)
+
+    def __init__(self, session: Session):
+        self._session = session
+
+    def get_personal_info(self) -> PersonalInfo:
+
+        url = self._API_HOST + self.OuraResources.PersonalInfo.value
+        response = self._session.get(url)
+
+        if response.ok:
+            return PersonalInfo.parse_raw(response.text)
+        else:
+            raise HTTPError(f"{response.status_code}: {response.text}")
