@@ -41,7 +41,7 @@ class RequestContext(BaseModel):
     timeEpoch: str
 
 
-class ApiRequest(BaseModel):
+class HttpApiRequest(BaseModel):
     # https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html
     version: str
     routeKey: str
@@ -52,4 +52,19 @@ class ApiRequest(BaseModel):
     queryStringParameters: Optional[Dict[str, str]]
     requestContext: RequestContext
     body: Optional[str]
-    isBase64Encoded: Optional[bool]
+    isBase64Encoded: bool
+
+    @property
+    def username(self) -> Optional[str]:
+        try:
+            return self.requestContext.authorizer.jwt.username
+        except AttributeError:
+            return None
+
+
+class HttpApiResponse(BaseModel):
+    cookies: Optional[List[str]]
+    isBase64Encoded: bool = False
+    statusCode: int = 200
+    headers: Optional[Dict[str, str]]
+    body: Optional[str]

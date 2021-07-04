@@ -196,7 +196,6 @@ class OuraResources(Enum):
 
 
 class OuraUserAuthorizer:
-
     @classmethod
     def build(cls, environment: str):
         secret = get_secret_value(environment, OURA_SECRET_SUFFIX)
@@ -211,20 +210,14 @@ class OuraUserAuthorizer:
 
     def authorize_user(self, auth_code: str, redirect_uri: Optional[str]) -> OuraUserAuth:
 
-        payload = {
-            "grant_type": "authorization_code",
-            "code": auth_code
-        }
+        payload = {"grant_type": "authorization_code", "code": auth_code}
         if redirect_uri:
             payload["redirect_uri"] = redirect_uri
 
         return self._get_access_token(payload)
 
     def refresh_user(self, refresh_token) -> OuraUserAuth:
-        payload = {
-            "grant_type": "refresh_token",
-            "refresh_token": refresh_token
-        }
+        payload = {"grant_type": "refresh_token", "refresh_token": refresh_token}
         return self._get_access_token(payload)
 
     def _get_access_token(self, payload: Dict[str, str]) -> OuraUserAuth:
@@ -238,7 +231,6 @@ class OuraUserAuthorizer:
 
 
 class OuraApiAccess:
-
     @classmethod
     def build(cls, access_token: str):
         session = Session()

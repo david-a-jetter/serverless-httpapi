@@ -1,7 +1,7 @@
 import logging
 from typing import Dict
-from hearty.lifecycle import Lifecycle
-from hearty.utils.aws_models import ApiRequest
+from hearty.lifecycle import HttpLifecycle
+from hearty.utils.aws_models import HttpApiRequest
 
 
 logger = logging.getLogger(__name__)
@@ -9,8 +9,8 @@ logger = logging.getLogger(__name__)
 
 def echo(event: Dict, context) -> Dict:
 
-    with Lifecycle(event, context):
-        request = ApiRequest(**event)
+    with HttpLifecycle(event, context):
+        request = HttpApiRequest(**event)
         logger.info("Received event", extra={"request_body": request.body})
 
         return event

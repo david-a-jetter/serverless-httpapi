@@ -7,15 +7,15 @@ logger = logging.getLogger(__name__)
 
 
 def _configure_logging() -> None:
-    logger = logging.getLogger()
-    [logger.removeHandler(h) for h in logger.handlers]
-    logger.setLevel(logging.INFO)
-    logHandler = logging.StreamHandler()
-    logHandler.setFormatter(jsonlogger.JsonFormatter())
-    logger.addHandler(logHandler)
+    root_logger = logging.getLogger()
+    [root_logger.removeHandler(h) for h in root_logger.handlers]
+    root_logger.setLevel(logging.INFO)
+    handler = logging.StreamHandler()
+    handler.setFormatter(jsonlogger.JsonFormatter())
+    root_logger.addHandler(handler)
 
 
-class Lifecycle:
+class HttpLifecycle:
     def __init__(self, event: Dict, context):
         self._event = event
         self._context = context

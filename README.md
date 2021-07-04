@@ -10,14 +10,16 @@ A backend API to support hearty.
 1. Poetry - recommend installing using [their primary instructions](https://python-poetry.org/docs/#installation)
 
 ## Building and Deploying
-
 This project is using [Serverless Framework](https://www.serverless.com/) for deployment to AWS. 
 Serverless is installed as a **local** NPM package, and therefore should be invoked via `npx`
 
-1. `poetry install` - sets up Poetry-managed virtual environment and installs python packages
-1. `npx install` - installs Serverless and any specified plugins
-1. `npx sls package` - (optional) creates a local zip file of the Serverless application
-1. `npx sls deploy` - deploys Serverless application to AWS, using your default AWS profile
+### Makefile
+It's recommended to use the `Makefile` commands
+1. `make black` - format application and test directions using [Black](https://github.com/psf/black)
+1. `make build` - performs `poetry install` and `npm install`
+1. `make test` - runs Python tests, Black format checks, and mypy type checks
+1. `make package` - runs `serverless package` for generate deployment artifacts
+1. `make deploy stage={stage}` - runs `serverless deploy` to deploy the generated artifacts to the designated stage
 
 ## Components
 
