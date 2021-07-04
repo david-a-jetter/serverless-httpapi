@@ -14,6 +14,7 @@ provider:
   name: ${self:custom.common.provider.name}
   runtime: ${self:custom.common.provider.runtime}
   memorySize: ${self:custom.common.provider.memorySize}
+  region: ${self:custom.common.provider.region}
   environment:
     DOMAIN_SUFFIX: hearty-${opt:stage, self:provider.stage}
   httpApi:

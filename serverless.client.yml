@@ -13,7 +13,12 @@ package:
     - '!./**'
     - hearty/**
 
-provider: ${self:custom.common.provider}
+provider:
+  name: ${self:custom.common.provider.name}
+  runtime: ${self:custom.common.provider.runtime}
+  memorySize: ${self:custom.common.provider.memorySize}
+  region: ${self:custom.common.provider.region}
+  httpApi: ${self:custom.common.provider.httpApi}
 
 functions:
   oura-authorize-user:
