@@ -1,14 +1,14 @@
 service: hearty
 configValidationMode: warn
 plugins:
- - serverless-python-requirements
- - serverless-prune-plugin
+  - serverless-python-requirements
+  - serverless-prune-plugin
 
 pythonRequirements:
   dockerizePip: true
   slim: true
   slimPatterns:
-   - '**/*.so'
+    - '**/*.so'
   pythonBin: C:\Users\David\.pyenv\pyenv-win\shims\python.bat
 
 prune:
@@ -20,7 +20,28 @@ package:
     - '!./**'
     - hearty/**
 
+dev:
+  httpApi:
+    id: k9wf8c9n8i
+    authorizers:
+      clientAuthorizer:
+        userPoolId: us-east-1_E5iuQkx19
+        userPoolClient: 4hbskri74hhuhodvku9kpvlum3
+
 provider:
   name: aws
   runtime: python3.8
   memorySize: 128
+#  httpApi:
+#    id: ${self:${opt.stage}.httpApi.id}
+#    authorizers:
+#      clientAuthorizer:
+#        identitySource: $request.header.Authorization
+#        issuerUrl:
+#          Fn::Join:
+#            - ''
+#            - - 'https://cognito-idp.'
+#            - '${opt:region, self:provider.region}'
+#            - '.amazonaws.com/'
+#            - ${self:${opt.stage}.httpApi.authorizers.clientAuthorizer.userPoolId}
+#        audience: ${self:${opt.stage}.httpApi.authorizers.clientAuthorizer.userPoolClient}

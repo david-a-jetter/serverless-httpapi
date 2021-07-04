@@ -13,7 +13,14 @@ package:
     - '!./**'
     - hearty/**
 
-provider:
-  name: ${self:custom.common.provider.name}
-  runtime: ${self:custom.common.provider.runtime}
-  memorySize: ${self:custom.common.provider.memorySize}
+provider: ${self:custom.common.provider}
+
+functions:
+  oura-authorize-user:
+    handler: hearty.oura.lambdas.client.authorize_user
+    events:
+      - httpApi:
+          authorizer: clientAuthorizer
+          path: /oura/authorize-user
+          method: post
+

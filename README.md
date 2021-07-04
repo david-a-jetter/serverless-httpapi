@@ -18,8 +18,8 @@ It's recommended to use the `Makefile` commands
 1. `make black` - format application and test directions using [Black](https://github.com/psf/black)
 1. `make build` - performs `poetry install` and `npm install`
 1. `make test` - runs Python tests, Black format checks, and mypy type checks
-1. `make package` - runs `serverless package` for generate deployment artifacts
-1. `make deploy stage={stage}` - runs `serverless deploy` to deploy the generated artifacts to the designated stage
+1. `make deploy-core stage={stage}` - runs `serverless deploy` for the core infrastructure stack
+1. `make-deploya-apps stage={stage}` - runs `serverless deploy` for the business apps that depend on the core infrastructure
 
 ## Components
 

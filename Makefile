@@ -12,8 +12,8 @@ test:
 	poetry run black --check tests
 	poetry run pytest tests
 
-package:
-	npx sls package
+deploy-core:
+	npx sls deploy --stage $(stage)
 
-deploy:
-	npx sls deploy -c serverless.yml -p .serverless -s $(stage)
+deploy-apps:
+	npx sls deploy --config serverless.client.yml --stage $(stage)
