@@ -6,17 +6,12 @@ from typing import List, Optional, Dict
 from pydantic import BaseModel, Field
 from requests import Session, HTTPError
 
-from hearty.oura.constants import OURA_SECRET_SUFFIX
-from hearty.utils.credentials import get_secret_value
+from hearty.oura.constants import OURA_APP_NAME
+from hearty.utils.credentials import CredentialsRepository
 from hearty.utils.requests_utils import mount_logging_adapters
 
 _API_HOST = "https://api.ouraring.com/"
 logger = logging.getLogger(__name__)
-
-
-class OuraSecret(BaseModel):
-    client_id: str
-    client_secret: str
 
 
 class OuraUserAuth(BaseModel):
@@ -198,11 +193,14 @@ class OuraResources(Enum):
 class OuraUserAuthorizer:
     @classmethod
     def build(cls, environment: str):
-        secret = get_secret_value(environment, OURA_SECRET_SUFFIX)
-        oura_secret = OuraSecret.parse_raw(secret)
+
+        secrets_repo = CredentialsRepository.build(environment)
+        secret = secrets_repo(OURA_APP_NAME)
+        if not secret.client_id or not secret.client_secret:
+            raise ValueError("Client Id and Client Secret are both mandatory")
         session = Session()
         mount_logging_adapters(session)
-        session.auth = (oura_secret.client_id, oura_secret.client_secret)
+        session.auth = (secret.client_id, secret.client_secret)
         return cls(session)
 
     def __init__(self, session: Session):

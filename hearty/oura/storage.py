@@ -2,7 +2,7 @@ from typing import Optional
 
 from hearty.oura.api import OuraUserAuth, PersonalInfo
 from hearty.oura.constants import USER_KEY_ATTRIBUTE, USER_AUTH_TABLE_SUFFIX, USER_INFO_TABLE_SUFFIX
-from hearty.utils.storage import PartitionKeyedDynamoRepository
+from hearty.utils.dynamo import PartitionKeyedDynamoRepository
 
 
 class OuraUserAuthRepository:

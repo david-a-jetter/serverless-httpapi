@@ -72,6 +72,19 @@ resources:
         UserPoolId:
           Ref: serviceUserPool
         Domain: service-user-pool-domain-${opt:stage, self:provider.stage}-${self:provider.environment.DOMAIN_SUFFIX}
+    secretsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.common.custom.appEnv}-secrets
+        BillingMode: PAY_PER_REQUEST
+        SSESpecification:`
+          SSEEnabled: true
+        AttributeDefinitions:
+          - AttributeName: app_name
+            AttributeType: S
+        KeySchema:
+          - AttributeName: app_name
+            KeyType: HASH
     ouraUserAuthTable:
       Type: AWS::DynamoDB::Table
       Properties:

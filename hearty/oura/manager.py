@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from typing import Optional
 from hearty.models import Patient
-from hearty.oura.api import OuraApiAccess, OuraUserAuthorizer, PersonalInfo, OuraUserAuth
+from hearty.oura.api import OuraApiAccess, OuraUserAuthorizer, OuraUserAuth
 from hearty.oura.models import AuthCodeRequest
 from hearty.oura.storage import OuraUserAuthRepository, OuraUserInfoRepository
-from hearty.utils.storage import PartitionKeyedDynamoRepository
 
 
 class OuraUserAuthManager:

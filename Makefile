@@ -17,3 +17,5 @@ deploy-core:
 
 deploy-apps:
 	npx sls deploy --config serverless.client.yml --stage $(stage)
+
+deploy-all: deploy-core deploy-apps
