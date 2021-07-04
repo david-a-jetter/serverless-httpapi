@@ -2,13 +2,28 @@ import logging
 from abc import ABC, abstractmethod
 from datetime import date, datetime
 from enum import IntEnum, Enum
-from typing import List
+from typing import List, Optional, Dict
 from pydantic import BaseModel, Field
 from requests import Session, HTTPError
 
+from hearty.oura.constants import OURA_SECRET_SUFFIX
+from hearty.utils.credentials import get_secret_value
 from hearty.utils.requests_utils import mount_logging_adapters
 
+_API_HOST = "https://api.ouraring.com/"
 logger = logging.getLogger(__name__)
+
+
+class OuraSecret(BaseModel):
+    client_id: str
+    client_secret: str
+
+
+class OuraUserAuth(BaseModel):
+    token_type: str
+    access_token: str
+    expires_in: str
+    refresh_token: str
 
 
 class PersonalInfo(BaseModel):
@@ -172,19 +187,62 @@ class IdealBedtime(DatedBaseModel):
         return self.date
 
 
-class OuraApiAccess:
-    class OuraResources(Enum):
-        AccessToken = "oauth/token"
-        PersonalInfo = "v1/userinfo"
-        Sleep = "v1/sleep"
-        Activity = "v1/activity"
-        Readiness = "v1/readiness"
+class OuraResources(Enum):
+    AccessToken = "oauth/token"
+    PersonalInfo = "v1/userinfo"
+    Sleep = "v1/sleep"
+    Activity = "v1/activity"
+    Readiness = "v1/readiness"
 
-    _API_HOST = "https://api.ouraring.com/"
+
+class OuraUserAuthorizer:
 
     @classmethod
-    def build(cls):
+    def build(cls, environment: str):
+        secret = get_secret_value(environment, OURA_SECRET_SUFFIX)
+        oura_secret = OuraSecret.parse_raw(secret)
         session = Session()
+        mount_logging_adapters(session)
+        session.auth = (oura_secret.client_id, oura_secret.client_secret)
+        return cls(session)
+
+    def __init__(self, session: Session):
+        self._session = session
+
+    def authorize_user(self, auth_code: str, redirect_uri: Optional[str]) -> OuraUserAuth:
+
+        payload = {
+            "grant_type": "authorization_code",
+            "code": auth_code
+        }
+        if redirect_uri:
+            payload["redirect_uri"] = redirect_uri
+
+        return self._get_access_token(payload)
+
+    def refresh_user(self, refresh_token) -> OuraUserAuth:
+        payload = {
+            "grant_type": "refresh_token",
+            "refresh_token": refresh_token
+        }
+        return self._get_access_token(payload)
+
+    def _get_access_token(self, payload: Dict[str, str]) -> OuraUserAuth:
+        url = _API_HOST + OuraResources.AccessToken.value
+        response = self._session.post(url, data=payload)
+
+        if response.ok:
+            return OuraUserAuth.parse_raw(response.text)
+        else:
+            raise HTTPError(f"{response.status_code}: {response.text}")
+
+
+class OuraApiAccess:
+
+    @classmethod
+    def build(cls, access_token: str):
+        session = Session()
+        session.headers["Authorization"] = f"Bearer {access_token}"
         mount_logging_adapters(session)
         return cls(session)
 
@@ -193,7 +251,7 @@ class OuraApiAccess:
 
     def get_personal_info(self) -> PersonalInfo:
 
-        url = self._API_HOST + self.OuraResources.PersonalInfo.value
+        url = _API_HOST + OuraResources.PersonalInfo.value
         response = self._session.get(url)
 
         if response.ok:

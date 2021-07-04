@@ -8,9 +8,18 @@ import boto3
 from boto3.dynamodb.conditions import Key
 from pydantic import BaseModel
 
-from hearty.oura.api import PersonalInfo, Readiness, Sleep, Activity, IdealBedtime, DatedBaseModel
+from hearty.oura.api import (
+    Readiness,
+    Sleep,
+    Activity,
+    IdealBedtime,
+    DatedBaseModel,
+    PersonalInfo,
+    OuraUserAuth,
+)
 from hearty.oura.constants import (
-    USER_TABLE_SUFFIX,
+    USER_AUTH_TABLE,
+    USER_INFO_TABLE_SUFFIX,
     READINESS_TABLE_SUFFIX,
     SLEEP_TABLE_SUFFIX,
     ACTIVITY_TABLE_SUFFIX,
@@ -19,6 +28,14 @@ from hearty.oura.constants import (
 
 
 class AbstractOuraRepository(ABC):
+    @abstractmethod
+    def save_user_auth(self, user_id: str, info: OuraUserAuth) -> None:
+        pass
+
+    @abstractmethod
+    def get_user_auth(self, user_id: str) -> Optional[OuraUserAuth]:
+        pass
+
     @abstractmethod
     def save_user_info(self, user_id: str, info: PersonalInfo) -> None:
         pass
@@ -65,7 +82,8 @@ class DynamoOuraRepository(AbstractOuraRepository):
     def build(cls, table_prefix: str) -> DynamoOuraRepository:
         resource = boto3.resource("dynamodb")
         return cls(
-            cls._build_table(table_prefix, USER_TABLE_SUFFIX, resource),
+            cls._build_table(table_prefix, USER_AUTH_TABLE, resource),
+            cls._build_table(table_prefix, USER_INFO_TABLE_SUFFIX, resource),
             cls._build_table(table_prefix, READINESS_TABLE_SUFFIX, resource),
             cls._build_table(table_prefix, SLEEP_TABLE_SUFFIX, resource),
             cls._build_table(table_prefix, ACTIVITY_TABLE_SUFFIX, resource),
@@ -79,28 +97,32 @@ class DynamoOuraRepository(AbstractOuraRepository):
         return table
 
     def __init__(
-        self, user_table, readiness_table, sleep_table, activity_table, bedtime_table
+        self,
+        auth_table,
+        user_info_table,
+        readiness_table,
+        sleep_table,
+        activity_table,
+        bedtime_table,
     ) -> None:
-        self._users = user_table
+        self._auth = auth_table
+        self._user_info = user_info_table
         self._readiness = readiness_table
         self._sleep = sleep_table
         self._activity = activity_table
         self._bedtime = bedtime_table
 
-    def save_user_info(self, user_id: str, info: PersonalInfo) -> None:
+    def save_user_auth(self, user_id: str, auth: OuraUserAuth) -> None:
+        self._save_user_keyed_item(user_id, auth, self._auth)
 
-        item = {"user_id": user_id, **info.dict()}
-        self._users.put_item(Item=item)
+    def get_user_auth(self, user_id: str) -> Optional[OuraUserAuth]:
+        return self._get_user_keyed_item(user_id, OuraUserAuth, self._auth)
+
+    def save_user_info(self, user_id: str, info: PersonalInfo) -> None:
+        self._save_user_keyed_item(user_id, info, self._user_info)
 
     def get_user_info(self, user_id: str) -> Optional[PersonalInfo]:
-        key = {"user_id": user_id}
-        response = self._users.get_item(Key=key)
-        item = response.get("Item")
-
-        if item:
-            return PersonalInfo(**item)
-        else:
-            return None
+        return self._get_user_keyed_item(user_id, PersonalInfo, self._user_info)
 
     def save_readiness(self, user_id: str, readiness: Dict[date, Readiness]) -> None:
         self._save_date_keyed_items(user_id, readiness, self._readiness)
@@ -125,6 +147,24 @@ class DynamoOuraRepository(AbstractOuraRepository):
 
     def get_bedtime(self, user_id: str) -> Dict[date, IdealBedtime]:
         return self._get_user_keyed_items(user_id, IdealBedtime, self._bedtime)
+
+    @staticmethod
+    def _save_user_keyed_item(user_id: str, model_object: BaseModel, table) -> None:
+        item = {"user_id": user_id, **model_object.dict()}
+        table.put_item(Item=item)
+
+    @staticmethod
+    def _get_user_keyed_item(
+        user_id: str, model_class: Type[BaseModel], table
+    ) -> Optional[BaseModel]:
+        key = {"user_id": user_id}
+        response = table.get_item(Key=key)
+        item = response.get("Item")
+
+        if item:
+            return model_class(**item)
+        else:
+            return None
 
     @staticmethod
     def _save_date_keyed_items(user_id: str, items: Dict[date, BaseModel], table) -> None:
