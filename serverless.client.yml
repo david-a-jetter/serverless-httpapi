@@ -1,5 +1,5 @@
 service: ${self:custom.common.service}-client
-configValidationMode: warn
+configValidationMode: ${self:custom.common.configValidationMode}
 
 plugins: ${self:custom.common.plugins}
 
@@ -9,18 +9,24 @@ custom:
   prune: ${self:custom.common.prune}
   infra: ${self:custom.common.infra.${opt:stage}}
 
-package:
-  patterns:
-    - '!./**'
-    - hearty/**
+package: ${self:custom.common.package}
 
 provider:
   name: ${self:custom.common.provider.name}
   runtime: ${self:custom.common.provider.runtime}
   memorySize: ${self:custom.common.provider.memorySize}
   region: ${self:custom.common.provider.region}
+  timeout: ${self:custom.common.provider.timeout}
   httpApi:
     id: ${self:custom.infra.httpApi.id}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+          Resource: arn:aws:dynamodb:${self:custom.common.provider.region}:*:table/${self:custom.common.custom.appEnv}
 
 functions:
   oura-authorize-user:

@@ -33,6 +33,33 @@ class PartitionKeyedDynamoRepository(Generic[T]):
     def get_item(self, item_id: str) -> Optional[T]:
         return _get_partition_keyed_item(self._key_attribute, item_id, T, self._table)
 
+    @staticmethod
+    def _save_partition_keyed_item(
+        key_attribute: str, item_id: str, model_object: BaseModel, table
+    ) -> None:
+        logger.info(
+            "Saving item to partition keyed table",
+            extra={"table_name": table.table_name, "item_id": item_id},
+        )
+        item = {key_attribute: item_id, **model_object.dict()}
+        table.put_item(Item=item)
+
+    @staticmethod
+    def _get_partition_keyed_item(
+            key_attribute: str, item_id: str, model_class: Type[BaseModel], table
+    ) -> Optional[BaseModel]:
+        logger.info(
+            "Getting item from partition keyed table",
+            extra={"table_name": table.table_name, "item_id": item_id},
+        )
+        key = {key_attribute: item_id}
+        response = table.get_item(Key=key)
+        item = response.get("Item")
+
+        if item:
+            return model_class(**item)
+        else:
+            return None
 
 class DateKeyedDynamoRepository(Generic[DT]):
     @classmethod
@@ -57,34 +84,6 @@ def _build_table(prefix: str, suffix: str, resource):
     table_name = f"{prefix}-{suffix}"
     table = resource.Table(table_name)
     return table
-
-
-def _save_partition_keyed_item(
-    key_attribute: str, item_id: str, model_object: BaseModel, table
-) -> None:
-    logger.info(
-        "Saving item to partition keyed table",
-        extra={"table_name": table.table_name, "item_id": item_id},
-    )
-    item = {key_attribute: item_id, **model_object.dict()}
-    table.put_item(Item=item)
-
-
-def _get_partition_keyed_item(
-    key_attribute: str, item_id: str, model_class: Type[BaseModel], table
-) -> Optional[BaseModel]:
-    logger.info(
-        "Getting item from partition keyed table",
-        extra={"table_name": table.table_name, "item_id": item_id},
-    )
-    key = {key_attribute: item_id}
-    response = table.get_item(Key=key)
-    item = response.get("Item")
-
-    if item:
-        return model_class(**item)
-    else:
-        return None
 
 
 def _save_date_keyed_items(key_attribute: str, item_id: str, items: Iterable[DT], table) -> None:

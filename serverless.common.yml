@@ -20,6 +20,9 @@ package:
     - '!./**'
     - hearty/**
 
+custom:
+  appEnv: ${self:service}-${opt:stage}
+
 infra:
   dev:
     httpApi:
@@ -32,3 +35,4 @@ provider:
   runtime: python3.8
   memorySize: 128
   region: us-east-1
+  timeout: 10
