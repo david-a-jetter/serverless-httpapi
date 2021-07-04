@@ -25,25 +25,10 @@ infra:
     httpApi:
       id: k9wf8c9n8i
       authorizers:
-        clientAuthorizer:
-          userPoolId: us-east-1_E5iuQkx19
-          userPoolClient: 4hbskri74hhuhodvku9kpvlum3
+        clientAuthorizer: l9p3sd
 
 provider:
   name: aws
   runtime: python3.8
   memorySize: 128
   region: us-east-1
-  httpApi:
-    id: ${infra.${opt:stage}.httpApi.id}
-    authorizers:
-      clientAuthorizer:
-        identitySource: $request.header.Authorization
-        issuerUrl:
-          Fn::Join:
-            - ''
-            - - 'https://cognito-idp.'
-            - '${opt:region, self:provider.region}'
-            - '.amazonaws.com/'
-            - ${infra.${opt:stage}.httpApi.authorizers.clientAuthorizer.userPoolId}
-        audience: ${infra.${opt:stage}.httpApi.authorizers.clientAuthorizer.userPoolClient}

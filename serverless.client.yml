@@ -7,6 +7,7 @@ custom:
   common: ${file(serverless.common.yml)}
   pythonRequirements: ${self:custom.common.pythonRequirements}
   prune: ${self:custom.common.prune}
+  infra: ${self:custom.common.infra.${opt:stage}}
 
 package:
   patterns:
@@ -18,14 +19,16 @@ provider:
   runtime: ${self:custom.common.provider.runtime}
   memorySize: ${self:custom.common.provider.memorySize}
   region: ${self:custom.common.provider.region}
-  httpApi: ${self:custom.common.provider.httpApi}
+  httpApi:
+    id: ${self:custom.infra.httpApi.id}
 
 functions:
   oura-authorize-user:
     handler: hearty.oura.lambdas.client.authorize_user
     events:
       - httpApi:
-          authorizer: clientAuthorizer
+          authorizer:
+            type: jwt
+            id: ${self:custom.infra.httpApi.authorizers.clientAuthorizer}
           path: /oura/authorize-user
           method: post
-
