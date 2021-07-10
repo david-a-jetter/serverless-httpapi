@@ -1,5 +1,4 @@
 import logging
-from abc import ABC, abstractmethod
 from datetime import date, datetime
 from enum import IntEnum, Enum
 from typing import List, Optional, Dict
@@ -8,6 +7,7 @@ from requests import Session, HTTPError
 
 from hearty.oura.constants import OURA_APP_NAME
 from hearty.utils.credentials import CredentialsRepository
+from hearty.utils.dynamo import DatedBaseModel
 from hearty.utils.requests_utils import mount_logging_adapters
 
 _API_HOST = "https://api.ouraring.com/"
@@ -27,13 +27,6 @@ class PersonalInfo(BaseModel):
     weight: int
     gender: str
     email: str
-
-
-class DatedBaseModel(ABC, BaseModel):
-    @abstractmethod
-    @property
-    def date_key(self) -> date:
-        pass
 
 
 class Readiness(DatedBaseModel):

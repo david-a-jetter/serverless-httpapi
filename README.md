@@ -14,12 +14,12 @@ This project is using [Serverless Framework](https://www.serverless.com/) for de
 Serverless is installed as a **local** NPM package, and therefore should be invoked via `npx`
 
 ### Makefile
-It's recommended to use the `Makefile` commands
+It's recommended to use the `Makefile` commands instead of interacting directly with the tools.
 1. `make black` - format application and test directions using [Black](https://github.com/psf/black)
 1. `make build` - performs `poetry install` and `npm install`
 1. `make test` - runs Python tests, Black format checks, and mypy type checks
 1. `make deploy-core stage={stage}` - runs `serverless deploy` for the core infrastructure stack
-1. `make-deploya-apps stage={stage}` - runs `serverless deploy` for the business apps that depend on the core infrastructure
+1. `make-deploy-apps stage={stage}` - runs `serverless deploy` for the business apps that depend on the core infrastructure
 
 ## Components
 

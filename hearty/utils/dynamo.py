@@ -1,18 +1,27 @@
 from __future__ import annotations
 
 import logging
+from abc import abstractmethod, ABC
 from io import StringIO
 from datetime import date
 import boto3
 from boto3.dynamodb.conditions import Key
 from typing import TypeVar, Generic, Type, Optional, Dict, Iterable
-from hearty.oura.api import DatedBaseModel
 from pydantic import BaseModel
+
+
+logger = logging.getLogger(__name__)
+
+
+class DatedBaseModel(ABC, BaseModel):
+    @property
+    @abstractmethod
+    def date_key(self) -> date:
+        pass
 
 
 T = TypeVar("T", bound=BaseModel)
 DT = TypeVar("DT", bound=DatedBaseModel)
-logger = logging.getLogger(__name__)
 
 
 class PartitionKeyedDynamoRepository(Generic[T]):
