@@ -7,10 +7,14 @@ build:
 	npm install
 
 test:
+	poetry run python -m pytest tests
+
+check: test
 	poetry run mypy -m hearty
 	poetry run black --check hearty
 	poetry run black --check tests
-	poetry run pytest tests
+	poetry run flake8 hearty
+	poetry run flake8 tests
 
 deploy-core:
 	npx sls deploy --stage $(stage)

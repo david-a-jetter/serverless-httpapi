@@ -1,6 +1,6 @@
 import logging
 from typing import Dict
-from hearty.lifecycle import HttpLifecycle
+from hearty.utils.lifecycle import HttpLifecycle
 from hearty.utils.aws_models import HttpApiRequest
 
 

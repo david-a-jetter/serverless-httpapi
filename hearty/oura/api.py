@@ -138,8 +138,9 @@ class Activity(DatedBaseModel):
     average_met: float
     class_5min: str = Field(
         ...,
-        description="A string that contains one character for each starting five minutes of the activity period, "
-        "so that the first period starts from 4 AM local time. Enum of range of values is ActivityClass",
+        description="A string that contains one character for each starting five minutes "
+        "of the activity period, so that the first period starts from 4 AM "
+        "local time. Enum of range of values is ActivityClass",
     )
     met_1min: List[float] = Field(
         ...,

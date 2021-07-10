@@ -38,9 +38,9 @@ class HttpApiRequestFactory(factory.Factory):
     class Meta:
         model = HttpApiRequest
 
-    version = factory.fuzzy.FuzzyChoice(["1.0", "2.0"])
+    version = fuzzy.FuzzyChoice(["1.0", "2.0"])
     routeKey = factory.Faker("bs")
     rawPath = factory.Faker("bs")
     headers = {}
     requestContext = factory.SubFactory(RequestContextFactory)
-    isBase64Encoded = factory.fuzzy.FuzzyChoice([True, False])
+    isBase64Encoded = fuzzy.FuzzyChoice([True, False])

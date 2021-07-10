@@ -66,5 +66,5 @@ class HttpApiResponse(BaseModel):
     cookies: Optional[List[str]]
     isBase64Encoded: bool = False
     statusCode: int = 200
-    headers: Optional[Dict[str, str]]
+    headers: Optional[Dict[str, str]] = {"content-type": "application/json"}
     body: Optional[str]

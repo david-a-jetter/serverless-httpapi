@@ -17,7 +17,8 @@ Serverless is installed as a **local** NPM package, and therefore should be invo
 It's recommended to use the `Makefile` commands instead of interacting directly with the tools.
 1. `make black` - format application and test directions using [Black](https://github.com/psf/black)
 1. `make build` - performs `poetry install` and `npm install`
-1. `make test` - runs Python tests, Black format checks, and mypy type checks
+1. `make test` - runs Python tests
+1. `make check` - runs Python tests and Black, mypy, flake8, etc.
 1. `make deploy-core stage={stage}` - runs `serverless deploy` for the core infrastructure stack
 1. `make-deploy-apps stage={stage}` - runs `serverless deploy` for the business apps that depend on the core infrastructure
 

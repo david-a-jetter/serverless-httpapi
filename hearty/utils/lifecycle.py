@@ -1,12 +1,13 @@
-import json
 import logging
 from functools import wraps
 from http import HTTPStatus
+from typing import Dict
 
+from pydantic import BaseModel
 from pythonjsonlogger import jsonlogger
 from contextlib import ContextDecorator
 
-from hearty.utils.api_models import ApiError
+from hearty.models import ApiError, ApiResponse
 from hearty.utils.aws_models import HttpApiResponse
 
 logger = logging.getLogger(__name__)
@@ -30,16 +31,26 @@ class HttpLifecycle(ContextDecorator):
 
     def __call__(self, func):
         @wraps(func)
-        def wrapped_f(event, context):
+        def wrapped_f(event: Dict, context) -> Dict:
             context = {"function_name": context.function_name}
             logger.info("Event received", extra=context)
             try:
-                return func(event, context)
+                output = func(event, context)
+                logger.info("Event handling successfully completed", extra=context)
+                if isinstance(output, HttpApiResponse):
+                    return output.dict()
+
+                if isinstance(output, BaseModel):
+                    api_response = output
+                else:
+                    api_response = ApiResponse(message=str(output))
+                response = HttpApiResponse(body=api_response.json())
+                return response.dict()
+
             except Exception as ex:
                 logger.exception("Exception raised from event handler", extra=context)
                 response = HttpApiResponse(
                     statusCode=HTTPStatus.INTERNAL_SERVER_ERROR.value,
-                    headers={"content-type": "application/json"},
                     body=ApiError(error=str(ex)).json(),
                 )
                 return response.dict()

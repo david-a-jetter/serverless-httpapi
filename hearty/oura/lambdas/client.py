@@ -1,6 +1,6 @@
 import logging
 from typing import Dict
-from hearty.lifecycle import HttpLifecycle
+from hearty.utils.lifecycle import HttpLifecycle
 from hearty.oura.manager import OuraUserAuthManager
 from hearty.oura.models import AuthCodeRequest
 from hearty.utils.aws_models import HttpApiRequest

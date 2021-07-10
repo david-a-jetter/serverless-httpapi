@@ -1,8 +1,13 @@
 from unittest.mock import patch, MagicMock
 
+from faker import Faker
+
 from hearty.oura.lambdas.client import authorize_user
 from tests.factories import HttpApiRequestFactory
 from tests.test_oura.factories import AuthCodeRequestFactory
+
+
+fake = Faker()
 
 
 @patch("hearty.oura.lambdas.client.OuraUserAuthManager")
