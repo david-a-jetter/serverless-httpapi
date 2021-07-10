@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from requests import Session, HTTPError
 
 from hearty.oura.constants import OURA_APP_NAME
-from hearty.utils.credentials import CredentialsRepository
+from hearty.utils.credentials import build_credentials_repo
 from hearty.utils.storage import DatedBaseModel
 from hearty.utils.requests import mount_logging_adapters
 
@@ -188,8 +188,8 @@ class OuraUserAuthorizer:
     @classmethod
     def build(cls, environment: str):
 
-        secrets_repo = CredentialsRepository.build(environment)
-        secret = secrets_repo(OURA_APP_NAME)
+        secrets_repo = build_credentials_repo(environment)
+        secret = secrets_repo.get_item(OURA_APP_NAME)
         if not secret.client_id or not secret.client_secret:
             raise ValueError("Client Id and Client Secret are both mandatory")
         session = Session()
