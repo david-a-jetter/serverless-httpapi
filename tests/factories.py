@@ -1,6 +1,6 @@
 import factory
 from factory import fuzzy
-from hearty.utils.aws_models import HttpApiRequest, RequestContext, Authorizer, Jwt
+from hearty.utils.aws.models import HttpApiRequest, RequestContext, Authorizer, Jwt
 
 
 class JwtFactory(factory.Factory):

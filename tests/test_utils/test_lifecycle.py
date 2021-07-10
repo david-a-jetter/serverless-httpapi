@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 from faker import Faker
 
 from hearty.models import ApiResponse, ApiError
-from hearty.utils.aws_models import HttpApiResponse
+from hearty.utils.aws.models import HttpApiResponse
 from hearty.utils.lifecycle import HttpLifecycle
 
 fake = Faker()

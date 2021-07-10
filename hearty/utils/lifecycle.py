@@ -8,7 +8,7 @@ from pythonjsonlogger import jsonlogger
 from contextlib import ContextDecorator
 
 from hearty.models import ApiError, ApiResponse
-from hearty.utils.aws_models import HttpApiResponse
+from hearty.utils.aws.models import HttpApiResponse
 
 logger = logging.getLogger(__name__)
 

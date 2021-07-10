@@ -1,7 +1,7 @@
 import logging
 from typing import Dict
 from hearty.utils.lifecycle import HttpLifecycle
-from hearty.utils.aws_models import HttpApiRequest
+from hearty.utils.aws.aws_models import HttpApiRequest
 
 
 logger = logging.getLogger(__name__)

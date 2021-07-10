@@ -24,3 +24,15 @@ def test_authorize_user(auth_mgr):
 
     assert args[0] == http_request.username
     assert args[1] == auth_request
+
+
+def test_authorize_user_no_username():
+
+    http_request = HttpApiRequestFactory()
+    del http_request.requestContext.authorizer.jwt.claims["username"]
+
+    try:
+        authorize_user(http_request.dict(), MagicMock())
+    except Exception as ex:
+        assert isinstance(ex, ValueError)
+        assert str(ex) == "No username provided"

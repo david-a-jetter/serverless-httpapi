@@ -1,5 +1,5 @@
 from requests import Session
-from hearty.utils.requests_utils import mount_logging_adapters, LoggingAdapter
+from hearty.utils.requests import mount_logging_adapters, LoggingAdapter
 
 
 def test_mount_logging_adapters():

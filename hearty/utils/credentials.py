@@ -1,6 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
-from hearty.utils.dynamo import PartitionKeyedDynamoRepository
+from hearty.utils.aws.dynamo import PartitionKeyedDynamoRepository
 
 
 TABLE_KEY_ATTRIBUTE = "app_name"

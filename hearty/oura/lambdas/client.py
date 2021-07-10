@@ -3,7 +3,7 @@ from typing import Dict
 from hearty.utils.lifecycle import HttpLifecycle
 from hearty.oura.manager import OuraUserAuthManager
 from hearty.oura.models import AuthCodeRequest
-from hearty.utils.aws_models import HttpApiRequest
+from hearty.utils.aws.models import HttpApiRequest
 from hearty.utils.environment import get_app_environment
 
 logger = logging.getLogger(__name__)
