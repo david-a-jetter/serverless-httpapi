@@ -7,7 +7,7 @@ build:
 	npm install
 
 test:
-	poetry run python -m pytest tests
+	poetry run python -m pytest --cov=hearty tests
 
 check: test
 	poetry run mypy -m hearty
