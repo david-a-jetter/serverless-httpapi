@@ -30,6 +30,24 @@ provider:
               - Ref: serviceUserPool
         audience:
           - Ref: serviceUserPoolClient
+  stackPolicy:
+    - Effect: Allow
+      Principal: '*'
+      Action: 'Update:*'
+      Resource: '*'
+    - Effect: Deny
+      Principal: '*'
+      Resource: '*'
+      Action:
+        - Update:Replace
+        - Update:Delete
+      Condition:
+        StringEquals:
+          ResourceType:
+            - AWS::DynamoDB::Table
+            - AWS::Cognito::UserPool
+            - AWS::Cognito::UserPoolClient
+            - AWS::Cognito::UserPoolDomain
 
 resources:
   Resources:
