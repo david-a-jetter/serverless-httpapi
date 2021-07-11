@@ -26,7 +26,7 @@ class RequestContextFactory(factory.Factory):
     authorizer = factory.SubFactory(AuthorizerFactory)
     domainName = factory.Faker("bs")
     domainPrefix = factory.Faker("bs")
-    http = {}
+    http = factory.Dict({})
     requestId = factory.Faker("bs")
     routeKey = factory.Faker("bs")
     stage = factory.Faker("bs")
@@ -41,6 +41,6 @@ class HttpApiRequestFactory(factory.Factory):
     version = fuzzy.FuzzyChoice(["1.0", "2.0"])
     routeKey = factory.Faker("bs")
     rawPath = factory.Faker("bs")
-    headers = {}
+    headers = factory.Dict({})
     requestContext = factory.SubFactory(RequestContextFactory)
     isBase64Encoded = fuzzy.FuzzyChoice([True, False])

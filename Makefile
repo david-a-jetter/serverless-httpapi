@@ -10,7 +10,7 @@ test:
 	poetry run python -m pytest --cov=hearty tests
 
 check: test
-	poetry run mypy -m hearty
+	poetry run mypy hearty tests
 	poetry run black --check hearty
 	poetry run black --check tests
 	poetry run flake8 hearty

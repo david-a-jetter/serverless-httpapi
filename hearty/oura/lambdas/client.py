@@ -16,6 +16,6 @@ def authorize_user(event: Dict, context) -> None:
     username = http_request.username
     if username is None:
         raise ValueError("No username provided")
-    auth_request = AuthCodeRequest.parse_raw(http_request.body)
+    auth_request = AuthCodeRequest.parse_raw(http_request.body or "")
     auth_manager = OuraUserAuthManager.build(get_app_environment())
     auth_manager.authorize_first_time(username, auth_request)

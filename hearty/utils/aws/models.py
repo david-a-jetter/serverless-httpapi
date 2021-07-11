@@ -55,10 +55,27 @@ class HttpApiRequest(BaseModel):
     isBase64Encoded: bool
 
     @property
+    def jwt(self) -> Optional[Jwt]:
+        auth = self.requestContext.authorizer
+        if auth:
+            return auth.jwt
+        else:
+            return None
+
+    @property
     def username(self) -> Optional[str]:
-        try:
-            return self.requestContext.authorizer.jwt.username
-        except AttributeError:
+        jwt = self.jwt
+        if jwt:
+            return jwt.username
+        else:
+            return None
+
+    @property
+    def sub(self) -> Optional[str]:
+        jwt = self.jwt
+        if jwt:
+            return jwt.sub
+        else:
             return None
 
 

@@ -1,3 +1,4 @@
+import json
 import logging
 from functools import wraps
 from http import HTTPStatus
@@ -15,7 +16,8 @@ logger = logging.getLogger(__name__)
 
 def _configure_logging() -> None:
     root_logger = logging.getLogger()
-    [root_logger.removeHandler(h) for h in root_logger.handlers]
+    for h in root_logger.handlers:
+        root_logger.removeHandler(h)
     root_logger.setLevel(logging.INFO)
     handler = logging.StreamHandler()
     handler.setFormatter(jsonlogger.JsonFormatter())
@@ -43,7 +45,7 @@ class HttpLifecycle(ContextDecorator):
                 if isinstance(output, BaseModel):
                     api_response = output
                 else:
-                    api_response = ApiResponse(message=str(output))
+                    api_response = ApiResponse(message=json.dumps(output))
                 response = HttpApiResponse(body=api_response.json())
                 return response.dict()
 

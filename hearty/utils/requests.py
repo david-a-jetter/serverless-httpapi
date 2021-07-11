@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class LoggingAdapter(HTTPAdapter):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super(LoggingAdapter, self).__init__(*args, kwargs)
+        super(LoggingAdapter, self).__init__(*args, **kwargs)
 
     def send(self, request: PreparedRequest, *args: Any, **kwargs: Any) -> Response:
 

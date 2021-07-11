@@ -1,19 +1,11 @@
 from abc import ABC, abstractmethod
-from datetime import date
 from typing import Generic, TypeVar, Optional, Iterable, Dict
 
 from pydantic import BaseModel
 
 
-class DatedBaseModel(ABC, BaseModel):
-    @property
-    @abstractmethod
-    def date_key(self) -> date:
-        pass
-
-
 ObjT = TypeVar("ObjT", bound=BaseModel)
-FacetT = TypeVar("FacetT", bound=DatedBaseModel)
+FacetT = TypeVar("FacetT")
 
 
 class HashKeyedRepository(ABC, Generic[ObjT]):

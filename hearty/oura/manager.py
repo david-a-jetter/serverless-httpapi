@@ -13,7 +13,8 @@ class OuraUserAuthManager:
     @classmethod
     def build(cls, environment: str) -> OuraUserAuthManager:
         authorizer = OuraUserAuthorizer.build(environment)
-        storage = DynamoHashKeyedRepository[OuraUserAuth](
+        storage = DynamoHashKeyedRepository[OuraUserAuth].build(
+            item_class=OuraUserAuth,
             key_attribute=USER_KEY_ATTRIBUTE,
             environment=environment,
             table_name=USER_AUTH_TABLE_SUFFIX,
@@ -50,7 +51,8 @@ class OuraDataManager:
         if user_auth is None:
             raise ValueError(f"Could not find auth for user {user_id}")
         api = OuraApiAccess.build(user_auth.access_token)
-        storage = DynamoHashKeyedRepository[PersonalInfo](
+        storage = DynamoHashKeyedRepository[PersonalInfo].build(
+            item_class=PersonalInfo,
             key_attribute=USER_KEY_ATTRIBUTE,
             environment=environment,
             table_name=USER_INFO_TABLE_SUFFIX,

@@ -4,7 +4,7 @@ import logging
 from io import StringIO
 import boto3
 from boto3.dynamodb.conditions import Key
-from typing import Generic, Optional, Dict, Iterable, Type
+from typing import Optional, Dict, Iterable, Type
 from pydantic import BaseModel
 
 from hearty.utils.storage import HashKeyedRepository, ObjT, FacetT, FacetKeyedRepository
@@ -16,7 +16,7 @@ class DynamoHashKeyedRepository(HashKeyedRepository[ObjT]):
     @classmethod
     def build(
         cls, item_class: Type[ObjT], key_attribute: str, environment: str, table_name: str
-    ) -> DynamoHashKeyedRepository[Generic[ObjT]]:
+    ) -> DynamoHashKeyedRepository[ObjT]:
         resource = boto3.resource("dynamodb")
         return cls(item_class, key_attribute, _build_table(environment, table_name, resource))
 
@@ -30,8 +30,8 @@ class DynamoHashKeyedRepository(HashKeyedRepository[ObjT]):
             "Saving item to partition keyed table",
             extra={"table_name": self._table.table_name, "item_id": item_id},
         )
-        item = {self._key_attribute: item_id, **item.dict()}
-        self._table.put_item(Item=item)
+        put_item = {self._key_attribute: item_id, **item.dict()}
+        self._table.put_item(Item=put_item)
 
     def get_item(self, item_id: str) -> Optional[ObjT]:
         logger.info(
@@ -57,7 +57,7 @@ class DynamoFacetKeyedRepository(FacetKeyedRepository[ObjT, FacetT]):
         facet_attribute: str,
         environment: str,
         table_name: str,
-    ) -> DynamoFacetKeyedRepository[Generic[ObjT, FacetT]]:
+    ) -> DynamoFacetKeyedRepository[ObjT, FacetT]:
         resource = boto3.resource("dynamodb")
         return cls(
             item_class,
@@ -87,12 +87,12 @@ class DynamoFacetKeyedRepository(FacetKeyedRepository[ObjT, FacetT]):
             for item in items:
                 item_dict = item.dict()
                 facet_attribute = item_dict.pop(self._facet_attribute)
-                item = {
+                put_item = {
                     self._key_attribute: item_id,
                     self._facet_attribute: facet_attribute,
                     **item_dict,
                 }
-                batch.put_item(Item=item)
+                batch.put_item(Item=put_item)
 
     def get_items(self, item_id: str) -> Dict[FacetT, ObjT]:
         logger.info(
@@ -104,8 +104,7 @@ class DynamoFacetKeyedRepository(FacetKeyedRepository[ObjT, FacetT]):
         keyed_items = {}
         for item in response["Items"]:
             model_object = self._item_class(**item)
-            # TODO: Find a way to fetch the key without dumping to a dictionary
-            keyed_items[model_object.dict()[self._facet_attribute]] = model_object
+            keyed_items[getattr(model_object, self._facet_attribute)] = model_object
 
         return keyed_items
 
@@ -119,7 +118,7 @@ class DynamoFacetKeyedRepository(FacetKeyedRepository[ObjT, FacetT]):
             Select="COUNT", KeyConditionExpression=Key(self._key_attribute).eq(item_id)
         )
 
-        count = response["Count"]
+        count = int(response["Count"])
 
         return count
 

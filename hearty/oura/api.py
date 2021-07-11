@@ -7,7 +7,6 @@ from requests import Session, HTTPError
 
 from hearty.oura.constants import OURA_APP_NAME
 from hearty.utils.credentials import build_credentials_repo
-from hearty.utils.storage import DatedBaseModel
 from hearty.utils.requests import mount_logging_adapters
 
 _API_HOST = "https://api.ouraring.com/"
@@ -29,7 +28,7 @@ class PersonalInfo(BaseModel):
     email: str
 
 
-class Readiness(DatedBaseModel):
+class Readiness(BaseModel):
     # https://cloud.ouraring.com/docs/readiness
     summary_date: date
     period_id: int
@@ -44,12 +43,8 @@ class Readiness(DatedBaseModel):
     score_temperature: int
     rest_mode_state: int
 
-    @property
-    def date_key(self) -> date:
-        return self.summary_date
 
-
-class Sleep(DatedBaseModel):
+class Sleep(BaseModel):
     # https://cloud.ouraring.com/docs/sleep
     summary_date: date
     period_id: int
@@ -106,7 +101,7 @@ class RestMode(IntEnum):
     RECOVERING = 4
 
 
-class Activity(DatedBaseModel):
+class Activity(BaseModel):
     # https://cloud.ouraring.com/docs/activity
     summary_date: date
     day_start: datetime
@@ -149,10 +144,6 @@ class Activity(DatedBaseModel):
     )
     rest_mode_state: RestMode
 
-    @property
-    def date_key(self) -> date:
-        return self.summary_date
-
 
 class BedtimeWindow(BaseModel):
     start: int
@@ -165,15 +156,11 @@ class BedTimeStatus(Enum):
     IDEAL_BEDTIME_AVAILABLE = "IDEAL_BEDTIME_AVAILABLE"
 
 
-class IdealBedtime(DatedBaseModel):
+class IdealBedtime(BaseModel):
     # https://cloud.ouraring.com/docs/bedtime
     date: date
     bedtime_window: BedtimeWindow
     status: BedTimeStatus
-
-    @property
-    def date_key(self) -> date:
-        return self.date
 
 
 class OuraResources(Enum):
@@ -190,6 +177,10 @@ class OuraUserAuthorizer:
 
         secrets_repo = build_credentials_repo(environment)
         secret = secrets_repo.get_item(OURA_APP_NAME)
+        if secret is None:
+            raise ValueError(
+                f"No credentials for app {OURA_APP_NAME} found for environment {environment}"
+            )
         if not secret.client_id or not secret.client_secret:
             raise ValueError("Client Id and Client Secret are both mandatory")
         session = Session()
