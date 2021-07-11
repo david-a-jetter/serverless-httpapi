@@ -5,7 +5,7 @@ from hearty.models import Patient
 from hearty.oura.api import OuraApiAccess, OuraUserAuthorizer, OuraUserAuth, PersonalInfo
 from hearty.oura.constants import USER_KEY_ATTRIBUTE, USER_AUTH_TABLE_SUFFIX, USER_INFO_TABLE_SUFFIX
 from hearty.oura.models import AuthCodeRequest
-from hearty.utils.aws.dynamo import PartitionKeyedDynamoRepository
+from hearty.utils.aws.dynamo import DynamoHashKeyedRepository
 from hearty.utils.storage import HashKeyedRepository
 
 
@@ -13,7 +13,7 @@ class OuraUserAuthManager:
     @classmethod
     def build(cls, environment: str) -> OuraUserAuthManager:
         authorizer = OuraUserAuthorizer.build(environment)
-        storage = PartitionKeyedDynamoRepository[OuraUserAuth](
+        storage = DynamoHashKeyedRepository[OuraUserAuth](
             key_attribute=USER_KEY_ATTRIBUTE,
             environment=environment,
             table_name=USER_AUTH_TABLE_SUFFIX,
@@ -50,7 +50,7 @@ class OuraDataManager:
         if user_auth is None:
             raise ValueError(f"Could not find auth for user {user_id}")
         api = OuraApiAccess.build(user_auth.access_token)
-        storage = PartitionKeyedDynamoRepository[PersonalInfo](
+        storage = DynamoHashKeyedRepository[PersonalInfo](
             key_attribute=USER_KEY_ATTRIBUTE,
             environment=environment,
             table_name=USER_INFO_TABLE_SUFFIX,

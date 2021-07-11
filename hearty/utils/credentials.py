@@ -1,6 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
-from hearty.utils.aws.dynamo import PartitionKeyedDynamoRepository
+from hearty.utils.aws.dynamo import DynamoHashKeyedRepository
 from hearty.utils.storage import HashKeyedRepository
 
 TABLE_KEY_ATTRIBUTE = "app_name"
@@ -13,7 +13,7 @@ class Credential(BaseModel):
 
 
 def build_credentials_repo(environment: str) -> HashKeyedRepository[Credential]:
-    return PartitionKeyedDynamoRepository[Credential](
+    return DynamoHashKeyedRepository[Credential](
         key_attribute=TABLE_KEY_ATTRIBUTE,
         environment=environment,
         table_name=TABLE_NAME_SUFFIX,

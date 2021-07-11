@@ -2,26 +2,26 @@ from __future__ import annotations
 
 import logging
 from io import StringIO
-from datetime import date
 import boto3
 from boto3.dynamodb.conditions import Key
-from typing import Generic, Optional, Dict, Iterable
+from typing import Generic, Optional, Dict, Iterable, Type
 from pydantic import BaseModel
 
-from hearty.utils.storage import HashKeyedRepository, ObjT, DateKeyedRepository, DatedObjT
+from hearty.utils.storage import HashKeyedRepository, ObjT, FacetT, FacetKeyedRepository
 
 logger = logging.getLogger(__name__)
 
 
-class PartitionKeyedDynamoRepository(HashKeyedRepository[ObjT]):
+class DynamoHashKeyedRepository(HashKeyedRepository[ObjT]):
     @classmethod
     def build(
-        cls, key_attribute: str, environment: str, table_name: str
-    ) -> PartitionKeyedDynamoRepository[Generic[ObjT]]:
+        cls, item_class: Type[ObjT], key_attribute: str, environment: str, table_name: str
+    ) -> DynamoHashKeyedRepository[Generic[ObjT]]:
         resource = boto3.resource("dynamodb")
-        return cls(key_attribute, _build_table(environment, table_name, resource))
+        return cls(item_class, key_attribute, _build_table(environment, table_name, resource))
 
-    def __init__(self, key_attribute: str, table):
+    def __init__(self, item_class: Type[ObjT], key_attribute: str, table):
+        self._item_class = item_class
         self._key_attribute = key_attribute
         self._table = table
 
@@ -43,53 +43,85 @@ class PartitionKeyedDynamoRepository(HashKeyedRepository[ObjT]):
         item = response.get("Item")
 
         if item:
-            return type(ObjT)(**item)
+            return self._item_class(**item)
         else:
             return None
 
 
-class DateKeyedDynamoRepository(DateKeyedRepository[DatedObjT]):
+class DynamoFacetKeyedRepository(FacetKeyedRepository[ObjT, FacetT]):
     @classmethod
     def build(
-        cls, key_attribute: str, environment: str, table_name: str
-    ) -> DateKeyedDynamoRepository[Generic[DatedObjT]]:
+        cls,
+        item_class: Type[ObjT],
+        key_attribute: str,
+        facet_attribute: str,
+        environment: str,
+        table_name: str,
+    ) -> DynamoFacetKeyedRepository[Generic[ObjT, FacetT]]:
         resource = boto3.resource("dynamodb")
-        return cls(key_attribute, _build_table(environment, table_name, resource))
+        return cls(
+            item_class,
+            key_attribute,
+            facet_attribute,
+            _build_table(environment, table_name, resource),
+        )
 
-    def __init__(self, key_attribute: str, table):
+    def __init__(
+        self,
+        item_class: Type[ObjT],
+        key_attribute: str,
+        facet_attribute: str,
+        table,
+    ):
+        self._item_class = item_class
         self._key_attribute = key_attribute
+        self._facet_attribute = facet_attribute
         self._table = table
 
-    def save_items(self, item_id: str, items: Iterable[DatedObjT]) -> None:
+    def save_items(self, item_id: str, items: Iterable[ObjT]) -> None:
         logger.info(
-            "Saving items to date keyed table",
+            "Saving items to facet keyed table",
             extra={"table_name": self._table.table_name, "partition_key_id": item_id},
         )
         with self._table.batch_writer() as batch:
             for item in items:
+                item_dict = item.dict()
+                facet_attribute = item_dict.pop(self._facet_attribute)
                 item = {
                     self._key_attribute: item_id,
-                    "date": item.date_key,
-                    **item.dict(exclude={"date"}),
+                    self._facet_attribute: facet_attribute,
+                    **item_dict,
                 }
                 batch.put_item(Item=item)
 
-    def get_items(self, item_id: str) -> Dict[date, DatedObjT]:
+    def get_items(self, item_id: str) -> Dict[FacetT, ObjT]:
         logger.info(
-            "Getting items from date keyed table",
+            "Getting items from facet keyed table",
             extra={"table_name": self._table.table_name, "partition_key_id": item_id},
         )
 
         response = self._table.query(KeyConditionExpression=Key(self._key_attribute).eq(item_id))
         keyed_items = {}
         for item in response["Items"]:
-            model_object = type(DatedObjT)(**item)
-            keyed_items[model_object.date_key] = model_object
+            model_object = self._item_class(**item)
+            # TODO: Find a way to fetch the key without dumping to a dictionary
+            keyed_items[model_object.dict()[self._facet_attribute]] = model_object
 
         return keyed_items
 
     def get_count(self, item_id: str) -> int:
-        raise NotImplementedError()
+        logger.info(
+            "Getting count of items from facet keyed table",
+            extra={"table_name": self._table.table_name, "partition_key_id": item_id},
+        )
+
+        response = self._table.query(
+            Select="COUNT", KeyConditionExpression=Key(self._key_attribute).eq(item_id)
+        )
+
+        count = response["Count"]
+
+        return count
 
 
 def _build_table(prefix: str, suffix: str, resource):
