@@ -15,6 +15,8 @@ check: test
 	poetry run black --check tests
 	poetry run flake8 hearty
 	poetry run flake8 tests
+	npx sls print --stage dev
+	npx sls print --config serverless.client.yml --stage dev
 
 deploy-core:
 	npx sls deploy --stage $(stage)
