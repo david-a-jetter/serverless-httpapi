@@ -1,10 +1,10 @@
-black:
-	poetry run black hearty
-	poetry run black tests
-
 build:
 	poetry install
 	npm install
+
+black:
+	poetry run black hearty
+	poetry run black tests
 
 test:
 	poetry run python -m pytest --cov=hearty tests
