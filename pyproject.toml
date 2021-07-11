@@ -6,7 +6,7 @@ authors = ["David Jetter <davidajetter@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-pydantic = "^1.8.2"
+pydantic = {extras = ["email"], version = "^1.8.2"}
 python-json-logger = "^2.0.1"
 factory-boy = "^3.2.0"
 

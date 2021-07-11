@@ -1,4 +1,3 @@
-import json
 import logging
 from functools import wraps
 from http import HTTPStatus
@@ -39,15 +38,17 @@ class HttpLifecycle(ContextDecorator):
             try:
                 output = func(event, context)
                 logger.info("Event handling successfully completed", extra=context)
-                if isinstance(output, HttpApiResponse):
-                    return output.dict()
 
-                if isinstance(output, BaseModel):
-                    api_response = output
+                # TODO: Make this a map / strategy pattern
+                if output is None:
+                    http_response = HttpApiResponse()
+                elif isinstance(output, HttpApiResponse):
+                    http_response = output
+                elif isinstance(output, BaseModel):
+                    http_response = HttpApiResponse(body=output.json())
                 else:
-                    api_response = ApiResponse(message=json.dumps(output))
-                response = HttpApiResponse(body=api_response.json())
-                return response.dict()
+                    http_response = HttpApiResponse(body=ApiResponse(message=str(output)).json())
+                return http_response.dict()
 
             except Exception as ex:
                 logger.exception("Exception raised from event handler", extra=context)

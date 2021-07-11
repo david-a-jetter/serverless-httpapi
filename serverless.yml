@@ -77,7 +77,7 @@ resources:
       Properties:
         TableName: ${self:custom.common.custom.appEnv}-secrets
         BillingMode: PAY_PER_REQUEST
-        SSESpecification:`
+        SSESpecification:
           SSEEnabled: true
         AttributeDefinitions:
           - AttributeName: app_name
@@ -98,7 +98,87 @@ resources:
         KeySchema:
           - AttributeName: user_id
             KeyType: HASH
-
+    ouraUserInfoTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.common.custom.appEnv}-OuraUserInfo
+        BillingMode: PAY_PER_REQUEST
+        SSESpecification:
+          SSEEnabled: true
+        AttributeDefinitions:
+          - AttributeName: user_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: user_id
+            KeyType: HASH
+    ouraReadinessTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.common.custom.appEnv}-OuraReadiness
+        BillingMode: PAY_PER_REQUEST
+        SSESpecification:
+          SSEEnabled: true
+        AttributeDefinitions:
+          - AttributeName: user_id
+            AttributeType: S
+          - AttributeName: summary_date
+            AttributeType: S
+        KeySchema:
+          - AttributeName: user_id
+            KeyType: HASH
+          - AttributeName: summary_date
+            KeyType: RANGE
+    ouraSleepTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.common.custom.appEnv}-OuraSleep
+        BillingMode: PAY_PER_REQUEST
+        SSESpecification:
+          SSEEnabled: true
+        AttributeDefinitions:
+          - AttributeName: user_id
+            AttributeType: S
+          - AttributeName: summary_date
+            AttributeType: S
+        KeySchema:
+          - AttributeName: user_id
+            KeyType: HASH
+          - AttributeName: summary_date
+            KeyType: RANGE
+    ouraActivityTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.common.custom.appEnv}-OuraActivity
+        BillingMode: PAY_PER_REQUEST
+        SSESpecification:
+          SSEEnabled: true
+        AttributeDefinitions:
+          - AttributeName: user_id
+            AttributeType: S
+          - AttributeName: summary_date
+            AttributeType: S
+        KeySchema:
+          - AttributeName: user_id
+            KeyType: HASH
+          - AttributeName: summary_date
+            KeyType: RANGE
+    ouraBedtimeTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.common.custom.appEnv}-OuraBedtime
+        BillingMode: PAY_PER_REQUEST
+        SSESpecification:
+          SSEEnabled: true
+        AttributeDefinitions:
+          - AttributeName: user_id
+            AttributeType: S
+          - AttributeName: date
+            AttributeType: S
+        KeySchema:
+          - AttributeName: user_id
+            KeyType: HASH
+          - AttributeName: date
+            KeyType: RANGE
 
 functions:
   echo:

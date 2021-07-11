@@ -10,6 +10,16 @@ from hearty.utils.lifecycle import HttpLifecycle
 fake = Faker()
 
 
+def test_none_response():
+    @HttpLifecycle()
+    def wrapped(event, context):
+        return None
+
+    actual = wrapped(MagicMock(), MagicMock())
+
+    assert actual == HttpApiResponse().dict()
+
+
 def test_successful_http_api_response():
     expected = HttpApiResponse(statusCode=HTTPStatus.ACCEPTED.value, body=fake.bothify())
 

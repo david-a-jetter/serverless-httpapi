@@ -8,9 +8,9 @@ logger = logging.getLogger(__name__)
 
 
 @HttpLifecycle()
-def echo(event: Dict, context) -> Dict:
+def echo(event: Dict, context):
 
     request = HttpApiRequest(**event)
     logger.info("Received event", extra={"request_body": request.body})
 
-    return event
+    return request
