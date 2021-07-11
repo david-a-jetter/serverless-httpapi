@@ -13,7 +13,8 @@ class Credential(BaseModel):
 
 
 def build_credentials_repo(environment: str) -> HashKeyedRepository[Credential]:
-    return DynamoHashKeyedRepository[Credential](
+    return DynamoHashKeyedRepository[Credential].build(
+        item_class=Credential,
         key_attribute=TABLE_KEY_ATTRIBUTE,
         environment=environment,
         table_name=TABLE_NAME_SUFFIX,
