@@ -26,7 +26,7 @@ class OuraUserAuthManager:
         self._storage = storage
 
     def authorize_first_time(self, user_id: str, request: AuthCodeRequest) -> None:
-        user_auth = self._authorizer.authorize_user(request.code, request.redirect_uri)
+        user_auth = self._authorizer.authorize_user(request)
         self._storage.save_item(user_id, user_auth)
 
     def refresh_authorization(self, user_id: str) -> None:

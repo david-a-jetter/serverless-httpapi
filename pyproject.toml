@@ -30,6 +30,7 @@ line-length = 100
 python_version = "3.8"
 warn_return_any = true
 warn_unused_configs = true
+show_error_codes = true
 
 [[tool.mypy.overrides]]
 module = ["faker", "pythonjsonlogger", "factory"]

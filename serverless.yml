@@ -190,12 +190,12 @@ resources:
         AttributeDefinitions:
           - AttributeName: user_id
             AttributeType: S
-          - AttributeName: date
+          - AttributeName: summary_date
             AttributeType: S
         KeySchema:
           - AttributeName: user_id
             KeyType: HASH
-          - AttributeName: date
+          - AttributeName: summary_date
             KeyType: RANGE
 
 functions:

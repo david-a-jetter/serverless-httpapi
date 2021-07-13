@@ -1,9 +1,18 @@
 import logging
-from typing import Optional, Dict
+from datetime import date
+from typing import Dict, Type, Optional
+
+from pydantic import BaseModel
 from requests import Session, HTTPError
 
 from hearty.oura.constants import OURA_APP_NAME
-from hearty.oura.models import OuraUserAuth, OuraResources, PersonalInfo
+from hearty.oura.models import (
+    OuraUserAuth,
+    OuraResources,
+    PersonalInfo,
+    AuthCodeRequest,
+    SleepSummary,
+)
 from hearty.utils.credentials import build_credentials_repo
 from hearty.utils.requests import mount_logging_adapters
 
@@ -15,27 +24,27 @@ class OuraUserAuthorizer:
     @classmethod
     def build(cls, environment: str):
 
-        secrets_repo = build_credentials_repo(environment)
-        secret = secrets_repo.get_item(OURA_APP_NAME)
-        if secret is None:
+        cred_repo = build_credentials_repo(environment)
+        credential = cred_repo.get_item(OURA_APP_NAME)
+        if credential is None:
             raise ValueError(
                 f"No credentials for app {OURA_APP_NAME} found for environment {environment}"
             )
-        if not secret.client_id or not secret.client_secret:
+        if not credential.client_id or not credential.client_secret:
             raise ValueError("Client Id and Client Secret are both mandatory")
         session = Session()
         mount_logging_adapters(session)
-        session.auth = (secret.client_id, secret.client_secret)
+        session.auth = (credential.client_id, credential.client_secret)
         return cls(session)
 
     def __init__(self, session: Session):
         self._session = session
 
-    def authorize_user(self, auth_code: str, redirect_uri: Optional[str]) -> OuraUserAuth:
+    def authorize_user(self, auth_request: AuthCodeRequest) -> OuraUserAuth:
 
-        payload = {"grant_type": "authorization_code", "code": auth_code}
-        if redirect_uri:
-            payload["redirect_uri"] = redirect_uri
+        payload = {"grant_type": "authorization_code", "code": auth_request.code}
+        if auth_request.redirect_uri:
+            payload["redirect_uri"] = auth_request.redirect_uri
 
         return self._get_access_token(payload)
 
@@ -67,9 +76,24 @@ class OuraApiAccess:
     def get_personal_info(self) -> PersonalInfo:
 
         url = _API_HOST + OuraResources.PersonalInfo.value
-        response = self._session.get(url)
+        return self._make_get_call(url, PersonalInfo)  # type: ignore[return-value]
+
+    def get_sleep_periods(self, start: date, end: date) -> SleepSummary:
+        url = _API_HOST + OuraResources.Sleep.value
+        params = {"start": str(start), "end": str(end)}
+
+        return self._make_get_call(url, SleepSummary, params)  # type: ignore[return-value]
+
+    def _make_get_call(
+        self, url: str, response_model: Type[BaseModel], params: Optional[Dict[str, str]] = None
+    ) -> BaseModel:
+
+        if params:
+            response = self._session.get(url, params=params)
+        else:
+            response = self._session.get(url)
 
         if response.ok:
-            return PersonalInfo.parse_raw(response.text)
+            return response_model.parse_raw(response.text)
         else:
             raise HTTPError(f"{response.status_code}: {response.text}")

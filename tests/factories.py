@@ -1,6 +1,7 @@
 import factory
 from factory import fuzzy
 from hearty.utils.aws.models import HttpApiRequest, RequestContext, Authorizer, Jwt
+from hearty.utils.credentials import Credential
 
 
 class JwtFactory(factory.Factory):
@@ -44,3 +45,11 @@ class HttpApiRequestFactory(factory.Factory):
     headers = factory.Dict({})
     requestContext = factory.SubFactory(RequestContextFactory)
     isBase64Encoded = fuzzy.FuzzyChoice([True, False])
+
+
+class CredentialFactory(factory.Factory):
+    class Meta:
+        model = Credential
+
+    client_id = factory.Faker("bs")
+    client_secret = factory.Faker("bs")

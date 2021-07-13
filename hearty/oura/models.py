@@ -12,7 +12,7 @@ class AuthCodeRequest(BaseModel):
 class OuraUserAuth(BaseModel):
     token_type: str
     access_token: str
-    expires_in: str
+    expires_in: int
     refresh_token: str
 
 
@@ -74,6 +74,10 @@ class Sleep(BaseModel):
     hypnogram_5min: str
     hr_5min: List[int]
     rmssd_5min: List[int]
+
+
+class SleepSummary(BaseModel):
+    sleep: List[Sleep]
 
 
 class ActivityClass(IntEnum):
@@ -150,7 +154,7 @@ class BedTimeStatus(Enum):
 
 class IdealBedtime(BaseModel):
     # https://cloud.ouraring.com/docs/bedtime
-    date: date
+    summary_date: date = Field(..., alias="date")
     bedtime_window: BedtimeWindow
     status: BedTimeStatus
 
