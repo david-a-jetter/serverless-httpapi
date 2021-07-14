@@ -40,6 +40,10 @@ class Readiness(BaseModel):
     rest_mode_state: int
 
 
+class ReadinessResponse(BaseModel):
+    readiness: List[Readiness]
+
+
 class Sleep(BaseModel):
     # https://cloud.ouraring.com/docs/sleep
     summary_date: date
@@ -141,6 +145,10 @@ class Activity(BaseModel):
     rest_mode_state: RestMode
 
 
+class ActivityResponse(BaseModel):
+    activity: List[Activity]
+
+
 class BedtimeWindow(BaseModel):
     start: int
     end: int
@@ -153,15 +161,14 @@ class BedTimeStatus(Enum):
 
 
 class IdealBedtime(BaseModel):
+    class Config:
+        allow_population_by_field_name = True
+
     # https://cloud.ouraring.com/docs/bedtime
     summary_date: date = Field(..., alias="date")
     bedtime_window: BedtimeWindow
     status: BedTimeStatus
 
 
-class OuraResources(Enum):
-    AccessToken = "oauth/token"
-    PersonalInfo = "v1/userinfo"
-    Sleep = "v1/sleep"
-    Activity = "v1/activity"
-    Readiness = "v1/readiness"
+class IdealBedtimeResponse(BaseModel):
+    ideal_bedtimes: List[IdealBedtime]

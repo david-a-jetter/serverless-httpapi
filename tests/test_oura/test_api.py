@@ -10,6 +10,10 @@ from tests.test_oura.factories import (
     OuraUserAuthFactory,
     AuthCodeRequestFactory,
     PersonalInfoFactory,
+    SleepSummaryFactory,
+    ActivityResponseFactory,
+    ReadinessResponseFactory,
+    IdealBedtimeResponseFactory,
 )
 
 fake = Faker()
@@ -161,3 +165,79 @@ def test_get_personal_info_error():
 
     with pytest.raises(HTTPError):
         api.get_personal_info()
+
+
+def test_get_sleep_summaries():
+    session = MagicMock()
+    api = OuraApiAccess(session)
+    response_obj = SleepSummaryFactory()
+    response = MagicMock()
+    response.text = response_obj.json()
+    session.get.return_value = response
+    start = fake.date()
+    end = fake.date()
+
+    sleep = api.get_sleep_summaries(start, end)
+
+    assert sleep == response_obj
+    args, kwargs = session.get.call_args
+
+    assert args[0] == "https://api.ouraring.com/v1/sleep"
+    assert kwargs["params"] == {"start": str(start), "end": str(end)}
+
+
+def test_get_activity_summaries():
+    session = MagicMock()
+    api = OuraApiAccess(session)
+    response_obj = ActivityResponseFactory()
+    response = MagicMock()
+    response.text = response_obj.json()
+    session.get.return_value = response
+    start = fake.date()
+    end = fake.date()
+
+    sleep = api.get_activity_summaries(start, end)
+
+    assert sleep == response_obj
+    args, kwargs = session.get.call_args
+
+    assert args[0] == "https://api.ouraring.com/v1/activity"
+    assert kwargs["params"] == {"start": str(start), "end": str(end)}
+
+
+def test_get_readiness_summaries():
+    session = MagicMock()
+    api = OuraApiAccess(session)
+    response_obj = ReadinessResponseFactory()
+    response = MagicMock()
+    response.text = response_obj.json()
+    session.get.return_value = response
+    start = fake.date()
+    end = fake.date()
+
+    sleep = api.get_readiness_summaries(start, end)
+
+    assert sleep == response_obj
+    args, kwargs = session.get.call_args
+
+    assert args[0] == "https://api.ouraring.com/v1/readiness"
+    assert kwargs["params"] == {"start": str(start), "end": str(end)}
+
+
+def test_get_ideal_bedtimes():
+    session = MagicMock()
+    api = OuraApiAccess(session)
+    response_obj = IdealBedtimeResponseFactory()
+    response = MagicMock()
+    response.text = response_obj.json()
+    session.get.return_value = response
+    start = fake.date()
+    end = fake.date()
+
+    sleep = api.get_ideal_bedtimes(start, end)
+
+    assert sleep == response_obj
+    args, kwargs = session.get.call_args
+
+    assert args[0] == "https://api.ouraring.com/v1/bedtime"
+    assert kwargs["params"] == {"start": str(start), "end": str(end)}

@@ -1,6 +1,7 @@
 import logging
 from datetime import date
-from typing import Dict, Type, Optional
+from enum import Enum
+from typing import Dict, Type
 
 from pydantic import BaseModel
 from requests import Session, HTTPError
@@ -8,16 +9,27 @@ from requests import Session, HTTPError
 from hearty.oura.constants import OURA_APP_NAME
 from hearty.oura.models import (
     OuraUserAuth,
-    OuraResources,
     PersonalInfo,
     AuthCodeRequest,
     SleepSummary,
+    ActivityResponse,
+    ReadinessResponse,
+    IdealBedtimeResponse,
 )
 from hearty.utils.credentials import build_credentials_repo
 from hearty.utils.requests import mount_logging_adapters
 
 _API_HOST = "https://api.ouraring.com/"
 logger = logging.getLogger(__name__)
+
+
+class OuraResources(Enum):
+    AccessToken = "oauth/token"
+    PersonalInfo = "v1/userinfo"
+    Sleep = "v1/sleep"
+    Activity = "v1/activity"
+    Readiness = "v1/readiness"
+    Bedtime = "v1/bedtime"
 
 
 class OuraUserAuthorizer:
@@ -76,22 +88,42 @@ class OuraApiAccess:
     def get_personal_info(self) -> PersonalInfo:
 
         url = _API_HOST + OuraResources.PersonalInfo.value
-        return self._make_get_call(url, PersonalInfo)  # type: ignore[return-value]
+        response = self._session.get(url)
 
-    def get_sleep_periods(self, start: date, end: date) -> SleepSummary:
+        if response.ok:
+            return PersonalInfo.parse_raw(response.text)
+        else:
+            raise HTTPError(f"{response.status_code}: {response.text}")
+
+    def get_sleep_summaries(self, start: date, end: date) -> SleepSummary:
         url = _API_HOST + OuraResources.Sleep.value
         params = {"start": str(start), "end": str(end)}
 
         return self._make_get_call(url, SleepSummary, params)  # type: ignore[return-value]
 
+    def get_activity_summaries(self, start: date, end: date) -> ActivityResponse:
+        url = _API_HOST + OuraResources.Activity.value
+        params = {"start": str(start), "end": str(end)}
+
+        return self._make_get_call(url, ActivityResponse, params)  # type: ignore[return-value]
+
+    def get_readiness_summaries(self, start: date, end: date) -> ReadinessResponse:
+        url = _API_HOST + OuraResources.Readiness.value
+        params = {"start": str(start), "end": str(end)}
+
+        return self._make_get_call(url, ReadinessResponse, params)  # type: ignore[return-value]
+
+    def get_ideal_bedtimes(self, start: date, end: date) -> IdealBedtimeResponse:
+        url = _API_HOST + OuraResources.Bedtime.value
+        params = {"start": str(start), "end": str(end)}
+
+        return self._make_get_call(url, IdealBedtimeResponse, params)  # type: ignore[return-value]
+
     def _make_get_call(
-        self, url: str, response_model: Type[BaseModel], params: Optional[Dict[str, str]] = None
+        self, url: str, response_model: Type[BaseModel], params: Dict[str, str]
     ) -> BaseModel:
 
-        if params:
-            response = self._session.get(url, params=params)
-        else:
-            response = self._session.get(url)
+        response = self._session.get(url, params=params)
 
         if response.ok:
             return response_model.parse_raw(response.text)
