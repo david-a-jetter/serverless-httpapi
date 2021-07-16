@@ -145,4 +145,7 @@ node_modules/
 
 # PyCharm Directories
 .idea/
+
+# Generated OpenAPI Docs
 /doc/api/**/models*
+openapi.**
