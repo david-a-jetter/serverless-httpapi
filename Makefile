@@ -28,4 +28,5 @@ deploy-apps:
 deploy-all: deploy-core deploy-apps
 
 docs:
+	poetry run python doc/generate_schema.py
 	npx sls openapi generate --config serverless.client.yml --stage $(stage) --output openapi.client.yml

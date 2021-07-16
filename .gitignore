@@ -145,3 +145,4 @@ node_modules/
 
 # PyCharm Directories
 .idea/
+/doc/api/**/models*
