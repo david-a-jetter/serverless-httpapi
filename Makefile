@@ -25,3 +25,6 @@ deploy-apps:
 	npx sls deploy --config serverless.client.yml --stage $(stage)
 
 deploy-all: deploy-core deploy-apps
+
+docs:
+	npx sls openapi generate --config serverless.client.yml --stage $(stage) --output openapi.client.yml

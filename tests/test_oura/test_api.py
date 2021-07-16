@@ -4,7 +4,7 @@ import pytest
 from faker import Faker
 from requests import HTTPError
 
-from hearty.oura.api import OuraUserAuthorizer, OuraApiAccess
+from hearty.oura.api_access import OuraUserAuthorizer, OuraApiAccess
 from tests.factories import CredentialFactory
 from tests.test_oura.factories import (
     OuraUserAuthFactory,

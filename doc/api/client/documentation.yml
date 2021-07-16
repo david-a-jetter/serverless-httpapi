@@ -1,0 +1,11 @@
+documentation:
+  version: "1"
+  title: "My API"
+  description: "This is my API"
+  securitySchemes: {}
+  security: {}
+  models:
+    - name: OuraAuthCodeRequest
+      description: "Request to share Oura user authorization code"
+      contentType: "application/json"
+      schema: doc/api/client/models/OuraAuthCodeRequest.json

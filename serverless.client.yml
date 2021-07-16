@@ -8,6 +8,8 @@ custom:
   pythonRequirements: ${self:custom.common.pythonRequirements}
   prune: ${self:custom.common.prune}
   infra: ${self:custom.common.infra.${opt:stage}}
+  doc_directory: "doc/api/client"
+  documentation: ${file(${self:custom.doc_directory}/documentation.yml):documentation}
 
 package: ${self:custom.common.package}
 
@@ -38,3 +40,4 @@ functions:
             id: ${self:custom.infra.httpApi.authorizers.clientAuthorizer}
           path: /oura/authorize-user
           method: post
+          documentation: ${file(${self:custom.doc_directory}/endpoints.yml):oura-authorize-user}

@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Optional
 from hearty.models import Patient
-from hearty.oura.api import OuraApiAccess, OuraUserAuthorizer, OuraUserAuth, PersonalInfo
+from hearty.oura.api_access import OuraApiAccess, OuraUserAuthorizer, OuraUserAuth, PersonalInfo
 from hearty.oura.constants import USER_KEY_ATTRIBUTE, USER_AUTH_TABLE_SUFFIX, USER_INFO_TABLE_SUFFIX
-from hearty.oura.models import AuthCodeRequest
+from hearty.oura.api_models import OuraAuthCodeRequest
 from hearty.utils.aws.dynamo import DynamoHashKeyedRepository
 from hearty.utils.storage import HashKeyedRepository
 
@@ -25,7 +25,7 @@ class OuraUserAuthManager:
         self._authorizer = authorizer
         self._storage = storage
 
-    def authorize_first_time(self, user_id: str, request: AuthCodeRequest) -> None:
+    def authorize_first_time(self, user_id: str, request: OuraAuthCodeRequest) -> None:
         user_auth = self._authorizer.authorize_user(request)
         self._storage.save_item(user_id, user_auth)
 

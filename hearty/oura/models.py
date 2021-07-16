@@ -1,12 +1,7 @@
 from datetime import date, datetime
 from enum import IntEnum, Enum
-from typing import Optional, List
+from typing import List
 from pydantic import BaseModel, Field
-
-
-class AuthCodeRequest(BaseModel):
-    code: str
-    redirect_uri: Optional[str]
 
 
 class OuraUserAuth(BaseModel):

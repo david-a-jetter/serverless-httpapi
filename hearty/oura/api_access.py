@@ -7,10 +7,10 @@ from pydantic import BaseModel
 from requests import Session, HTTPError
 
 from hearty.oura.constants import OURA_APP_NAME
+from hearty.oura.api_models import OuraAuthCodeRequest
 from hearty.oura.models import (
     OuraUserAuth,
     PersonalInfo,
-    AuthCodeRequest,
     SleepSummary,
     ActivityResponse,
     ReadinessResponse,
@@ -52,7 +52,7 @@ class OuraUserAuthorizer:
     def __init__(self, session: Session):
         self._session = session
 
-    def authorize_user(self, auth_request: AuthCodeRequest) -> OuraUserAuth:
+    def authorize_user(self, auth_request: OuraAuthCodeRequest) -> OuraUserAuth:
 
         payload = {"grant_type": "authorization_code", "code": auth_request.code}
         if auth_request.redirect_uri:

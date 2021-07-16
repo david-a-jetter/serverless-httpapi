@@ -3,6 +3,7 @@ configValidationMode: warn
 plugins:
   - serverless-python-requirements
   - serverless-prune-plugin
+  - serverless-openapi
 
 pythonRequirements:
   dockerizePip: true

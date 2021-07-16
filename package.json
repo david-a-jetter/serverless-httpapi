@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "serverless": "^2.48.0",
+    "serverless-openapi": "^1.1.2",
     "serverless-prune-plugin": "^1.5.0",
     "serverless-python-requirements": "^5.1.1"
   }
