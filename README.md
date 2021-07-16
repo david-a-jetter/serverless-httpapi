@@ -27,6 +27,7 @@ It's recommended to use the `Makefile` commands instead of interacting directly 
 1. `make deploy-all stage={stage}` - deploys all components, making the following `make deploy*` commands duplicative
 1. `make deploy-core stage={stage}` - runs `serverless deploy` for the core infrastructure stack
 1. `make-deploy-apps stage={stage}` - runs `serverless deploy` for the business apps that depend on the core infrastructure
+1. `make docs stage={sage}` - generates JSON schema and OpenAPI yml files for public API endpoints
 
 ## Components
 
