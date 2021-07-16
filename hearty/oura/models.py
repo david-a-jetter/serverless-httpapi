@@ -160,7 +160,7 @@ class IdealBedtime(BaseModel):
         allow_population_by_field_name = True
 
     # https://cloud.ouraring.com/docs/bedtime
-    summary_date: date = Field(..., alias="date")
+    date: date
     bedtime_window: BedtimeWindow
     status: BedTimeStatus
 

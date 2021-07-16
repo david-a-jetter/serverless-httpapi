@@ -148,4 +148,4 @@ node_modules/
 
 # Generated OpenAPI Docs
 /doc/api/**/models*
-openapi.**
+# openapi.**

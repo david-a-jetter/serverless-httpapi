@@ -2,14 +2,16 @@ documentation:
   version: "0.0.1"
   title: "Hearty Client API"
   description: "Public API to support client user app operations"
-  # https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#
+  # https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md#security-scheme-object
   securitySchemes:
     congitoUserPool:
       type: oauth2
       description: "Cognito user pool implicit bearer token"
       flows:
-        implicit:
-          authorizationUrl: https://service-user-pool-domain-dev-hearty-dev.auth.us-east-1.amazoncognito.com/login
+        authorizationCode:
+          authorizationUrl: https://service-user-pool-domain-dev-hearty-dev.auth.us-east-1.amazoncognito.com/oauth2/authorize
+          tokenUrl: https://service-user-pool-domain-dev-hearty-dev.auth.us-east-1.amazoncognito.com/oauth2/token
+          refreshUrl: https://service-user-pool-domain-dev-hearty-dev.auth.us-east-1.amazoncognito.com/oauth2/token
           scopes:
             email: "Access email address"
             profile: "Access profile details"

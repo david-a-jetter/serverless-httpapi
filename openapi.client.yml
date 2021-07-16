@@ -1,0 +1,89 @@
+openapi: 3.0.0
+components:
+  schemas:
+    ApiResponse:
+      title: ApiResponse
+      type: object
+      properties:
+        message:
+          title: Message
+          type: string
+      required:
+        - message
+    ApiError:
+      title: ApiError
+      type: object
+      properties:
+        error:
+          title: Error
+          type: string
+      required:
+        - error
+    OuraAuthCodeRequest:
+      title: OuraAuthCodeRequest
+      type: object
+      properties:
+        code:
+          title: Code
+          type: string
+        redirect_uri:
+          title: Redirect Uri
+          type: string
+      required:
+        - code
+  securitySchemes:
+    congitoUserPool:
+      type: oauth2
+      description: Cognito user pool implicit bearer token
+      flows:
+        authorizationCode:
+          authorizationUrl: >-
+            https://service-user-pool-domain-dev-hearty-dev.auth.us-east-1.amazoncognito.com/oauth2/authorize
+          tokenUrl: >-
+            https://service-user-pool-domain-dev-hearty-dev.auth.us-east-1.amazoncognito.com/oauth2/token
+          refreshUrl: >-
+            https://service-user-pool-domain-dev-hearty-dev.auth.us-east-1.amazoncognito.com/oauth2/token
+          scopes:
+            email: Access email address
+            profile: Access profile details
+info:
+  title: Hearty Client API
+  description: Public API to support client user app operations
+  version: 0.0.1
+paths:
+  /client/oura/authorize-user:
+    post:
+      operationId: oura-authorize-user
+      summary: Share an Oura user's authorization
+      description: >-
+        Sends an Oura user's OAuth authorization code and optional redirect URL
+        to complete the OAuth flow
+      tags:
+        - oura
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OuraAuthCodeRequest'
+        description: 'Authorization code and optional Redirect URI, if used'
+      parameters: []
+      responses:
+        '200':
+          description: Status 200 Response
+          content: {}
+        '400':
+          description: Status 400 Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Status 500 Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+security:
+  - congitoUserPool:
+      - email
+      - profile

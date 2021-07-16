@@ -66,6 +66,7 @@ resources:
       Properties:
         ClientName: service-user-pool-client-${opt:stage, self:provider.stage}
         AllowedOAuthFlows:
+          - code
           - implicit
         AllowedOAuthFlowsUserPoolClient: true
         AllowedOAuthScopes:
@@ -190,12 +191,12 @@ resources:
         AttributeDefinitions:
           - AttributeName: user_id
             AttributeType: S
-          - AttributeName: summary_date
+          - AttributeName: date
             AttributeType: S
         KeySchema:
           - AttributeName: user_id
             KeyType: HASH
-          - AttributeName: summary_date
+          - AttributeName: date
             KeyType: RANGE
 
 functions:

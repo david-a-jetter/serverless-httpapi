@@ -181,7 +181,7 @@ class IdealBedtimeFactory(factory.Factory):
     class Meta:
         model = IdealBedtime
 
-    summary_date = factory.Faker("date")
+    date = factory.Faker("date")
     bedtime_window = factory.SubFactory(BedtimeWindowFactory)
     status = fuzzy.FuzzyChoice([_ for _ in BedTimeStatus])
 
