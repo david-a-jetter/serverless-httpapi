@@ -1,7 +1,7 @@
 documentation:
-  version: "1"
-  title: "My API"
-  description: "This is my API"
+  version: "0.0.1"
+  title: "Hearty Client API"
+  description: "Public API to support client user app operations"
   # https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#
   securitySchemes:
     congitoUserPool:
@@ -20,7 +20,7 @@ documentation:
       - profile
   models:
     - name: ApiResponse
-      description: "Bais message response object"
+      description: "Basic message response object"
       contentType: "application/json"
       schema: doc/api/models/ApiResponse.json
     - name: ApiError
