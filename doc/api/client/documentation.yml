@@ -2,9 +2,31 @@ documentation:
   version: "1"
   title: "My API"
   description: "This is my API"
-  securitySchemes: {}
-  security: {}
+  # https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#
+  securitySchemes:
+    congitoUserPool:
+      type: oauth2
+      description: "Cognito user pool implicit bearer token"
+      flows:
+        implicit:
+          authorizationUrl: https://service-user-pool-domain-dev-hearty-dev.auth.us-east-1.amazoncognito.com/login
+          scopes:
+            email: "Access email address"
+            profile: "Access profile details"
+  # https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#security-requirement-object
+  security:
+    - congitoUserPool:
+      - email
+      - profile
   models:
+    - name: ApiResponse
+      description: "Bais message response object"
+      contentType: "application/json"
+      schema: doc/api/models/ApiResponse.json
+    - name: ApiError
+      description: "Standard error response object"
+      contentType: "application/json"
+      schema: doc/api/models/ApiError.json
     - name: OuraAuthCodeRequest
       description: "Request to share Oura user authorization code"
       contentType: "application/json"

@@ -1,0 +1,13 @@
+{
+    "title": "ApiResponse",
+    "type": "object",
+    "properties": {
+        "message": {
+            "title": "Message",
+            "type": "string"
+        }
+    },
+    "required": [
+        "message"
+    ]
+}

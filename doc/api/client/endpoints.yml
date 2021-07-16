@@ -5,3 +5,12 @@ oura-authorize-user:
     description: "Authorization code and optional Redirect URI, if used"
   requestModels:
     application/json: "OuraAuthCodeRequest"
+  methodResponses:
+    - statusCode: 200
+      responseModels: []
+    - statusCode: 400
+      responseModels:
+        application/json: "ApiError"
+    - statusCode: 500
+      responseModels:
+        application/json: "ApiError"

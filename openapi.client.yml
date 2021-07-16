@@ -1,0 +1,77 @@
+openapi: 3.0.0
+components:
+  schemas:
+    ApiResponse:
+      title: ApiResponse
+      type: object
+      properties:
+        message:
+          title: Message
+          type: string
+      required:
+        - message
+    ApiError:
+      title: ApiError
+      type: object
+      properties:
+        error:
+          title: Error
+          type: string
+      required:
+        - error
+    OuraAuthCodeRequest:
+      title: OuraAuthCodeRequest
+      type: object
+      properties:
+        code:
+          title: Code
+          type: string
+        redirect_uri:
+          title: Redirect Uri
+          type: string
+      required:
+        - code
+  securitySchemes:
+    congitoUserPool:
+      type: oauth2
+      description: Cognito user pool implicit bearer token
+      flows:
+        implicit:
+          authorizationUrl: >-
+            https://service-user-pool-domain-dev-hearty-dev.auth.us-east-1.amazoncognito.com/login
+          scopes:
+            email: Access email address
+            profile: Access profile details
+info:
+  title: My API
+  description: This is my API
+  version: '1'
+paths:
+  /oura/authorize-user:
+    post:
+      operationId: oura-authorize-user
+      summary: Share an Oura user's authorization
+      description: >-
+        Sends an Oura user's OAuth authorization code and optional redirect URL
+        to complete the OAuth flow
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OuraAuthCodeRequest'
+        description: 'Authorization code and optional Redirect URI, if used'
+      parameters: []
+      responses:
+        '200':
+          description: Status 200 Response
+          content: {}
+        '400':
+          description: Status 400 Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+security:
+  - congitoUserPool:
+      - email
+      - profile
