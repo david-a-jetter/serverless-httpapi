@@ -200,7 +200,7 @@ resources:
 
 functions:
   echo:
-    handler: hearty.lambdas.echo.echo
+    handler: hearty.api.lambdas.echo.echo
     events:
       - httpApi:
           authorizer: serviceAuthorizer

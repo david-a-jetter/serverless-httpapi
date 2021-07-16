@@ -4,7 +4,7 @@ from typing import Optional
 from hearty.models import Patient
 from hearty.oura.api_access import OuraApiAccess, OuraUserAuthorizer, OuraUserAuth, PersonalInfo
 from hearty.oura.constants import USER_KEY_ATTRIBUTE, USER_AUTH_TABLE_SUFFIX, USER_INFO_TABLE_SUFFIX
-from hearty.oura.api_models import OuraAuthCodeRequest
+from hearty.api.client.models import OuraAuthCodeRequest
 from hearty.utils.aws.dynamo import DynamoHashKeyedRepository
 from hearty.utils.storage import HashKeyedRepository
 

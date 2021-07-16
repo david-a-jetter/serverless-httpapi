@@ -19,7 +19,7 @@ from tests.test_oura.factories import (
 fake = Faker()
 
 
-@patch("hearty.oura.api.build_credentials_repo")
+@patch("hearty.oura.api_access.build_credentials_repo")
 def test_auth_build(build_cred_repo):
     cred_repo = MagicMock()
     build_cred_repo.return_value = cred_repo
@@ -34,7 +34,7 @@ def test_auth_build(build_cred_repo):
     assert cred_repo.get_item.call_args[0][0] == "oura"
 
 
-@patch("hearty.oura.api.build_credentials_repo")
+@patch("hearty.oura.api_access.build_credentials_repo")
 def test_auth_build_null_client_id(build_cred_repo):
     cred_repo = MagicMock()
     build_cred_repo.return_value = cred_repo
@@ -46,7 +46,7 @@ def test_auth_build_null_client_id(build_cred_repo):
         OuraUserAuthorizer.build(env)
 
 
-@patch("hearty.oura.api.build_credentials_repo")
+@patch("hearty.oura.api_access.build_credentials_repo")
 def test_auth_build_null_client_secret(build_cred_repo):
     cred_repo = MagicMock()
     build_cred_repo.return_value = cred_repo

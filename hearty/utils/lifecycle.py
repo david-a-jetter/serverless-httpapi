@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from pythonjsonlogger import jsonlogger
 from contextlib import ContextDecorator
 
-from hearty.api_models import ApiError, ApiResponse
+from hearty.api.models import ApiError, ApiResponse
 from hearty.utils.aws.models import HttpApiResponse
 
 logger = logging.getLogger(__name__)

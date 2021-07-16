@@ -9,12 +9,13 @@ black:
 test:
 	poetry run python -m pytest --cov=hearty tests
 
-check: test
+check:
 	poetry run mypy hearty tests
-	poetry run black --check hearty
-	poetry run black --check tests
 	poetry run flake8 hearty
 	poetry run flake8 tests
+	make test
+	poetry run black --check hearty
+	poetry run black --check tests
 	npx sls print --stage dev
 	npx sls print --config serverless.client.yml --stage dev
 

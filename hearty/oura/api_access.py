@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from requests import Session, HTTPError
 
 from hearty.oura.constants import OURA_APP_NAME
-from hearty.oura.api_models import OuraAuthCodeRequest
+from hearty.api.client.models import OuraAuthCodeRequest
 from hearty.oura.models import (
     OuraUserAuth,
     PersonalInfo,

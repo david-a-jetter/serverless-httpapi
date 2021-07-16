@@ -3,8 +3,8 @@ import factory
 from factory import fuzzy
 from faker import Faker
 
+from hearty.api.client.models import OuraAuthCodeRequest
 from hearty.oura.models import (
-    AuthCodeRequest,
     OuraUserAuth,
     PersonalInfo,
     Sleep,
@@ -25,7 +25,7 @@ fake = Faker()
 
 class AuthCodeRequestFactory(factory.Factory):
     class Meta:
-        model = AuthCodeRequest
+        model = OuraAuthCodeRequest
 
     code = factory.Faker("bs")
     redirect_uri = factory.Faker("url")

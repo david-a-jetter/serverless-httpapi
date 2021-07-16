@@ -32,12 +32,12 @@ provider:
 
 functions:
   oura-authorize-user:
-    handler: hearty.oura.lambdas.client.authorize_user
+    handler: hearty.api.client.lambdas.oura.authorize_user
     events:
       - httpApi:
           authorizer:
             type: jwt
             id: ${self:custom.infra.httpApi.authorizers.clientAuthorizer}
-          path: /oura/authorize-user
+          path: /client/oura/authorize-user
           method: post
           documentation: ${file(${self:custom.doc_directory}/endpoints.yml):oura-authorize-user}
