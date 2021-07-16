@@ -1,6 +1,8 @@
 oura-authorize-user:
   summary: "Share an Oura user's authorization"
   description: "Sends an Oura user's OAuth authorization code and optional redirect URL to complete the OAuth flow"
+  tags:
+    - oura
   requestBody:
     description: "Authorization code and optional Redirect URI, if used"
   requestModels:

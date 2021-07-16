@@ -1,3 +1,5 @@
+stage=dev
+
 build:
 	poetry install
 	npm install
