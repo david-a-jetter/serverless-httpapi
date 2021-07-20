@@ -27,9 +27,9 @@ custom:
 infra:
   dev:
     httpApi:
-      id: k9wf8c9n8i
+      id: cktzfxeaie
       authorizers:
-        clientAuthorizer: l9p3sd
+        clientAuthorizer: xmvpyh
 
 provider:
   name: aws

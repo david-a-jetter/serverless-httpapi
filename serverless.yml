@@ -16,10 +16,9 @@ provider:
   memorySize: ${self:custom.common.provider.memorySize}
   region: ${self:custom.common.provider.region}
   environment:
-    DOMAIN_SUFFIX: hearty-${opt:stage, self:provider.stage}
   httpApi:
     authorizers:
-      serviceAuthorizer:
+      heartyUserPoolAuthorizer:
         identitySource: $request.header.Authorization
         issuerUrl:
           Fn::Join:
@@ -27,9 +26,9 @@ provider:
             - - 'https://cognito-idp.'
               - '${opt:region, self:provider.region}'
               - '.amazonaws.com/'
-              - Ref: serviceUserPool
+              - Ref: heartyUserPool
         audience:
-          - Ref: serviceUserPoolClient
+          - Ref: heartyUserPoolClient
   stackPolicy:
     - Effect: Allow
       Principal: '*'
@@ -52,19 +51,40 @@ provider:
 resources:
   Resources:
     HttpApi:
-      DependsOn: serviceUserPool
-    serviceUserPool:
+      DependsOn: heartyUserPool
+    heartyUserPool:
       Type: AWS::Cognito::UserPool
       Properties:
-        UserPoolName: service-user-pool-${opt:stage, self:provider.stage}
-        UsernameAttributes:
-          - email
+        AccountRecoverySetting:
+          RecoveryMechanisms:
+            - Name: verified_email
+              Priority: 1
         AutoVerifiedAttributes:
           - email
-    serviceUserPoolClient:
+        DeviceConfiguration:
+          ChallengeRequiredOnNewDevice: true
+          DeviceOnlyRememberedOnUserPrompt: false
+        EnabledMfas:
+          - SOFTWARE_TOKEN_MFA
+        MfaConfiguration: OPTIONAL
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 10
+            RequireLowercase: true
+            RequireNumbers: true
+            RequireSymbols: true
+            RequireUppercase: true
+        UsernameAttributes:
+          - email
+        UsernameConfiguration:
+          CaseSensitive: true
+        UserPoolAddOns:
+          AdvancedSecurityMode: ENFORCED
+        UserPoolName: ${self:custom.common.custom.appEnv}-user-pool
+    heartyUserPoolClient:
       Type: AWS::Cognito::UserPoolClient
       Properties:
-        ClientName: service-user-pool-client-${opt:stage, self:provider.stage}
+        ClientName: ${self:custom.common.custom.appEnv}-user-app
         AllowedOAuthFlows:
           - code
           - implicit
@@ -76,7 +96,7 @@ resources:
           - profile
           - aws.cognito.signin.user.admin
         UserPoolId:
-          Ref: serviceUserPool
+          Ref: heartyUserPool
         CallbackURLs:
           - https://localhost:3000
         ExplicitAuthFlows:
@@ -85,12 +105,12 @@ resources:
         GenerateSecret: false
         SupportedIdentityProviders:
           - COGNITO
-    serviceUserPoolDomain:
+    heartyeUserPoolDomain:
       Type: AWS::Cognito::UserPoolDomain
       Properties:
         UserPoolId:
-          Ref: serviceUserPool
-        Domain: service-user-pool-domain-${opt:stage, self:provider.stage}-${self:provider.environment.DOMAIN_SUFFIX}
+          Ref: heartyUserPool
+        Domain: ${self:custom.common.custom.appEnv}
     secretsTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -204,6 +224,6 @@ functions:
     handler: hearty.api.lambdas.echo.echo
     events:
       - httpApi:
-          authorizer: serviceAuthorizer
+          authorizer: heartyUserPoolAuthorizer
           path: /echo
           method: post
