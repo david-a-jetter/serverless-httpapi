@@ -22,7 +22,7 @@ package:
     - hearty/**
 
 custom:
-  appEnv: ${self:service}-${opt:stage}
+  appEnv: hearty-${opt:stage}
 
 infra:
   dev:
