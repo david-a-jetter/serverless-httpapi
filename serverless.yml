@@ -124,6 +124,7 @@ resources:
         KeySchema:
           - AttributeName: app_name
             KeyType: HASH
+    ## Oura Data tables ##
     ouraUserAuthTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -218,6 +219,41 @@ resources:
             KeyType: HASH
           - AttributeName: date
             KeyType: RANGE
+    ## Apple HealthKit Tables ##
+    healthKitHeartRateTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.common.custom.appEnv}-HealthKitHeartRate
+        BillingMode: PAY_PER_REQUEST
+        SSESpecification:
+          SSEEnabled: true
+        AttributeDefinitions:
+          - AttributeName: user_id
+            AttributeType: S
+          - AttributeName: start_epoch_seconds
+            AttributeType: S
+        KeySchema:
+          - AttributeName: user_id
+            KeyType: HASH
+          - AttributeName: start_epoch_seconds
+            KeyType: N
+    healthKitStepsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.common.custom.appEnv}-healthKitSteps
+        BillingMode: PAY_PER_REQUEST
+        SSESpecification:
+          SSEEnabled: true
+        AttributeDefinitions:
+          - AttributeName: user_id
+            AttributeType: S
+          - AttributeName: start_epoch_seconds
+            AttributeType: S
+        KeySchema:
+          - AttributeName: user_id
+            KeyType: HASH
+          - AttributeName: start_epoch_seconds
+            KeyType: N
 
 functions:
   echo:

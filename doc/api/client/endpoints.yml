@@ -16,3 +16,21 @@ oura-authorize-user:
     - statusCode: 500
       responseModels:
         application/json: "ApiError"
+healthkit-save-heartrates:
+  summary: "Save a batch of heart rate time series data"
+  description: "Persists a batch a user's heart rate time series data. Data is keyed by the user_id and start_epoch_seconds"
+  tags:
+    - healthkit
+  requestBody:
+    description: "Batch of time series data for heart rate data"
+  requestModels:
+    application/json: "IntegerTimeSeriesBatch"
+  methodResponses:
+    - statusCode: 200
+      responseModels: []
+    - statusCode: 400
+      responseModels:
+        application/json: "ApiError"
+    - statusCode: 500
+      responseModels:
+        application/json: "ApiError"

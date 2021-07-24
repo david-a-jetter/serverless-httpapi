@@ -4,22 +4,16 @@ from pydantic import BaseModel
 
 class Jwt(BaseModel):
     # https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
-    claims: Optional[Dict[str, str]]
-    scopes: Optional[Dict[str, str]]
+    claims: Dict[str, str] = {}
+    scopes: Dict[str, str] = {}
 
     @property
-    def sub(self) -> Optional[str]:
-        if self.claims:
-            return self.claims.get("sub")
-        else:
-            return None
+    def sub(self) -> str:
+        return self.claims["sub"]
 
     @property
-    def username(self) -> Optional[str]:
-        if self.claims:
-            return self.claims.get("username")
-        else:
-            return None
+    def username(self) -> str:
+        return self.claims["username"]
 
 
 class Authorizer(BaseModel):
@@ -51,32 +45,19 @@ class HttpApiRequest(BaseModel):
     headers: Dict[str, str]
     queryStringParameters: Optional[Dict[str, str]]
     requestContext: RequestContext
-    body: Optional[str]
+    body: str = ""
     isBase64Encoded: bool
 
     @property
-    def jwt(self) -> Optional[Jwt]:
-        auth = self.requestContext.authorizer
-        if auth:
-            return auth.jwt
+    def jwt(self) -> Jwt:
+        authorizer = self.requestContext.authorizer
+        if authorizer is None:
+            raise ValueError("No authorizer on this request")
+        jwt = authorizer.jwt
+        if jwt is None:
+            raise ValueError("jwt not used for this authorizer")
         else:
-            return None
-
-    @property
-    def username(self) -> Optional[str]:
-        jwt = self.jwt
-        if jwt:
-            return jwt.username
-        else:
-            return None
-
-    @property
-    def sub(self) -> Optional[str]:
-        jwt = self.jwt
-        if jwt:
-            return jwt.sub
-        else:
-            return None
+            return jwt
 
 
 class HttpApiResponse(BaseModel):

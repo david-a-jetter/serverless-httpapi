@@ -5,15 +5,15 @@ from typing import Type
 
 from pydantic import BaseModel
 
-ROOT = "hearty/api"
+ROOT = "hearty"
 
 
 def _build_schema_path(file: Path, cls: Type[BaseModel]) -> str:
-    schema_path_parts = []
+    schema_path_parts = ["doc", "schema"]
     file_path_parts = file.parts
     for i in range(0, len(file_path_parts) - 1):
         if i == 0:
-            schema_path_parts.append("doc")
+            continue
         else:
             schema_path_parts.append(file_path_parts[i])
     schema_path_parts.append("models")

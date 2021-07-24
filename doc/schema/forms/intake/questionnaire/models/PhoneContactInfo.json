@@ -1,0 +1,1 @@
+{"title": "PhoneContactInfo", "type": "object", "properties": {"home_phone": {"title": "Home Phone", "type": "string"}, "cell_phone": {"title": "Cell Phone", "type": "string"}, "work_phone": {"title": "Work Phone", "type": "string"}}}

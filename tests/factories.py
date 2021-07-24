@@ -1,5 +1,7 @@
 import factory
 from factory import fuzzy
+
+from hearty.models import IntegerTimeSeries
 from hearty.utils.aws.models import HttpApiRequest, RequestContext, Authorizer, Jwt
 from hearty.utils.credentials import Credential
 
@@ -53,3 +55,17 @@ class CredentialFactory(factory.Factory):
 
     client_id = factory.Faker("bs")
     client_secret = factory.Faker("bs")
+
+
+class IntegerTimeSeriesFactory(factory.Factory):
+    class Meta:
+        model = IntegerTimeSeries
+
+    start_epoch_seconds = factory.Faker("pyint")
+    end_epoch_seconds = factory.Faker("pyint")
+    max = factory.Faker("pyint")
+    mean = factory.Faker("pyfloat")
+    median = factory.Faker("pyint")
+    min = factory.Faker("pyint")
+    standard_deviation = factory.Faker("pyfloat")
+    sample_count = factory.Faker("pyint")

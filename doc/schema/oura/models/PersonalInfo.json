@@ -1,0 +1,1 @@
+{"title": "PersonalInfo", "type": "object", "properties": {"age": {"title": "Age", "type": "integer"}, "weight": {"title": "Weight", "type": "integer"}, "gender": {"title": "Gender", "type": "string"}, "email": {"title": "Email", "type": "string"}}, "required": ["age", "weight", "gender", "email"]}

@@ -1,0 +1,1 @@
+{"title": "Jwt", "type": "object", "properties": {"claims": {"title": "Claims", "default": {}, "type": "object", "additionalProperties": {"type": "string"}}, "scopes": {"title": "Scopes", "default": {}, "type": "object", "additionalProperties": {"type": "string"}}}}

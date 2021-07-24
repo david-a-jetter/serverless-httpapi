@@ -1,0 +1,1 @@
+{"title": "Address", "type": "object", "properties": {"line_one": {"title": "Line One", "type": "string"}, "line_two": {"title": "Line Two", "type": "string"}, "city": {"title": "City", "type": "string"}, "state": {"title": "State", "type": "string"}, "postal_code": {"title": "Postal Code", "type": "string"}}, "required": ["line_one", "city", "state", "postal_code"]}

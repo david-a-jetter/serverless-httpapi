@@ -1,0 +1,1 @@
+{"title": "ApiError", "type": "object", "properties": {"error": {"title": "Error", "type": "string"}}, "required": ["error"]}

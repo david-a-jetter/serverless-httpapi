@@ -22,7 +22,7 @@ def test_authorize_user(auth_mgr):
 
     args, kwargs = manager.authorize_first_time.call_args
 
-    assert args[0] == http_request.username
+    assert args[0] == http_request.jwt.username
     assert args[1] == auth_request
 
 
@@ -34,5 +34,4 @@ def test_authorize_user_no_username():
     try:
         authorize_user(http_request.dict(), MagicMock())
     except Exception as ex:
-        assert isinstance(ex, ValueError)
-        assert str(ex) == "No username provided"
+        assert isinstance(ex, KeyError)

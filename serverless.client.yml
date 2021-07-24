@@ -41,3 +41,13 @@ functions:
           path: /client/oura/authorize-user
           method: post
           documentation: ${file(${self:custom.doc_directory}/endpoints.yml):oura-authorize-user}
+  healthkit-save-heartrates:
+    handler: hearty.api.client.lambdas.healthkit.save_heart_rates
+    events:
+      - httpApi:
+          authorizer:
+            type: jwt
+            id: ${self:custom.infra.httpApi.authorizers.clientAuthorizer}
+          path: /client/healthkit/heart-rates
+          method: post
+          documentation: ${file(${self:custom.doc_directory}/endpoints.yml):healthkit-save-heartrates}

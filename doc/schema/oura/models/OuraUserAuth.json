@@ -1,0 +1,1 @@
+{"title": "OuraUserAuth", "type": "object", "properties": {"token_type": {"title": "Token Type", "type": "string"}, "access_token": {"title": "Access Token", "type": "string"}, "expires_in": {"title": "Expires In", "type": "integer"}, "refresh_token": {"title": "Refresh Token", "type": "string"}}, "required": ["token_type", "access_token", "expires_in", "refresh_token"]}

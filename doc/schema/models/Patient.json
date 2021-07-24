@@ -1,0 +1,1 @@
+{"title": "Patient", "type": "object", "properties": {"id": {"title": "Id", "type": "string"}, "email": {"title": "Email", "type": "string", "format": "email"}}, "required": ["id", "email"]}

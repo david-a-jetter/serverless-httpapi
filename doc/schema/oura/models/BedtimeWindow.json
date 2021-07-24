@@ -1,0 +1,1 @@
+{"title": "BedtimeWindow", "type": "object", "properties": {"start": {"title": "Start", "type": "integer"}, "end": {"title": "End", "type": "integer"}}, "required": ["start", "end"]}

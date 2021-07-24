@@ -1,0 +1,1 @@
+{"title": "Allergy", "type": "object", "properties": {"substance": {"title": "Substance", "type": "string"}, "reaction": {"title": "Reaction", "type": "string"}}, "required": ["substance", "reaction"]}

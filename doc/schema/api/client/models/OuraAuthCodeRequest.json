@@ -1,0 +1,1 @@
+{"title": "OuraAuthCodeRequest", "type": "object", "properties": {"code": {"title": "Code", "type": "string"}, "redirect_uri": {"title": "Redirect Uri", "type": "string"}}, "required": ["code"]}

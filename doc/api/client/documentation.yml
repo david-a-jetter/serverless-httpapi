@@ -24,12 +24,16 @@ documentation:
     - name: ApiResponse
       description: "Basic message response object"
       contentType: "application/json"
-      schema: doc/api/models/ApiResponse.json
+      schema: doc/schema/api/models/ApiResponse.json
     - name: ApiError
       description: "Standard error response object"
       contentType: "application/json"
-      schema: doc/api/models/ApiError.json
+      schema: doc/schema/api/models/ApiError.json
     - name: OuraAuthCodeRequest
       description: "Request to share Oura user authorization code"
       contentType: "application/json"
-      schema: doc/api/client/models/OuraAuthCodeRequest.json
+      schema: doc/schema/api/client/models/OuraAuthCodeRequest.json
+    - name: IntegerTimeSeriesBatch
+      description: "Collection of integer-based time series data"
+      contentType: "application/json"
+      schema: doc/schema/models/IntegerTimeSeriesBatch.json

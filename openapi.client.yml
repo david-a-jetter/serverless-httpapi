@@ -31,6 +31,48 @@ components:
           type: string
       required:
         - code
+    IntegerTimeSeries:
+      title: IntegerTimeSeries
+      type: object
+      properties:
+        start_epoch_seconds:
+          title: Start Epoch Seconds
+          type: integer
+        end_epoch_seconds:
+          title: End Epoch Seconds
+          type: integer
+        mean:
+          title: Mean
+          type: number
+        standard_deviation:
+          title: Standard Deviation
+          type: number
+        sample_count:
+          title: Sample Count
+          type: integer
+        max:
+          title: Max
+          type: integer
+        median:
+          title: Median
+          type: integer
+        min:
+          title: Min
+          type: integer
+      required:
+        - start_epoch_seconds
+        - end_epoch_seconds
+    IntegerTimeSeriesBatch:
+      title: IntegerTimeSeriesBatch
+      type: object
+      properties:
+        batch:
+          title: Batch
+          type: array
+          items:
+            $ref: '#/components/schemas/IntegerTimeSeries'
+      required:
+        - batch
   securitySchemes:
     congitoUserPool:
       type: oauth2
@@ -66,6 +108,38 @@ paths:
             schema:
               $ref: '#/components/schemas/OuraAuthCodeRequest'
         description: 'Authorization code and optional Redirect URI, if used'
+      parameters: []
+      responses:
+        '200':
+          description: Status 200 Response
+          content: {}
+        '400':
+          description: Status 400 Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Status 500 Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /client/healthkit/heart-rates:
+    post:
+      operationId: healthkit-save-heartrates
+      summary: Save a batch of heart rate time series data
+      description: >-
+        Persists a batch a user's heart rate time series data. Data is keyed by
+        the user_id and start_epoch_seconds
+      tags:
+        - healthkit
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IntegerTimeSeriesBatch'
+        description: Batch of time series data for heart rate data
       parameters: []
       responses:
         '200':
