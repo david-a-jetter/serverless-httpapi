@@ -19,18 +19,6 @@ components:
           type: string
       required:
         - error
-    OuraAuthCodeRequest:
-      title: OuraAuthCodeRequest
-      type: object
-      properties:
-        code:
-          title: Code
-          type: string
-        redirect_uri:
-          title: Redirect Uri
-          type: string
-      required:
-        - code
     IntegerTimeSeries:
       title: IntegerTimeSeries
       type: object
@@ -76,23 +64,58 @@ components:
   securitySchemes:
     congitoUserPool:
       type: oauth2
-      description: Cognito user pool implicit bearer token
+      description: Cognito user pool auth code with PKCE
       flows:
         authorizationCode:
           authorizationUrl: >-
-            https://service-user-pool-domain-dev-hearty-dev.auth.us-east-1.amazoncognito.com/oauth2/authorize
+            https://hearty-dev-admin.auth.us-east-1.amazoncognito.com/oauth2/authorize
           tokenUrl: >-
-            https://service-user-pool-domain-dev-hearty-dev.auth.us-east-1.amazoncognito.com/oauth2/token
+            https://hearty-dev-admin.auth.us-east-1.amazoncognito.com/oauth2/token
           refreshUrl: >-
-            https://service-user-pool-domain-dev-hearty-dev.auth.us-east-1.amazoncognito.com/oauth2/token
+            https://hearty-dev-admin.auth.us-east-1.amazoncognito.com/oauth2/token
           scopes:
             email: Access email address
             profile: Access profile details
 info:
-  title: Hearty Client API
-  description: Public API to support client user app operations
+  title: Hearty Admin API
+  description: Internal API to support admin user operations
   version: 0.0.1
-paths: {}
+paths:
+  '/client/healthkit/heart-rates/{userId}':
+    get:
+      operationId: healthkit-get-heartrates
+      summary: Retrieve a batch of heart rate time series data
+      description: >-
+        Returns a batch a user's heart rate time series data. Data is keyed by
+        the user_id
+      tags:
+        - healthkit
+      parameters:
+        - name: userId
+          in: path
+          description: The user ID of the patient for which to retrieve heart rates
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Status 200 Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegerTimeSeriesBatch'
+        '400':
+          description: Status 400 Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Status 500 Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
 security:
   - congitoUserPool:
       - email

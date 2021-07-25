@@ -79,12 +79,9 @@ components:
       description: Cognito user pool implicit bearer token
       flows:
         authorizationCode:
-          authorizationUrl: >-
-            https://service-user-pool-domain-dev-hearty-dev.auth.us-east-1.amazoncognito.com/oauth2/authorize
-          tokenUrl: >-
-            https://service-user-pool-domain-dev-hearty-dev.auth.us-east-1.amazoncognito.com/oauth2/token
-          refreshUrl: >-
-            https://service-user-pool-domain-dev-hearty-dev.auth.us-east-1.amazoncognito.com/oauth2/token
+          authorizationUrl: 'https://hearty-dev.auth.us-east-1.amazoncognito.com/oauth2/authorize'
+          tokenUrl: 'https://hearty-dev.auth.us-east-1.amazoncognito.com/oauth2/token'
+          refreshUrl: 'https://hearty-dev.auth.us-east-1.amazoncognito.com/oauth2/token'
           scopes:
             email: Access email address
             profile: Access profile details
