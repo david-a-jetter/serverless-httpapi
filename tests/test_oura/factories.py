@@ -80,10 +80,10 @@ class SleepFactory(factory.Factory):
     efficiency = factory.Faker("pyint")
     midpoint_time = factory.Faker("pyint")
     hr_lowest = factory.Faker("pyint")
-    hr_average = factory.Faker("pyfloat")
+    hr_average = factory.Faker("pydecimal")
     rmssd = factory.Faker("pyint")
     breath_average = factory.Faker("pyint")
-    temperature_delta = factory.Faker("pyfloat")
+    temperature_delta = factory.Faker("pydecimal")
     hypnogram_5min = factory.LazyFunction(
         lambda: "".join([fake.lexify(text="?") for _ in range(0, 50)])
     )
@@ -129,11 +129,11 @@ class ActivityFactory(factory.Factory):
     met_min_medium_plus = factory.Faker("pyint")
     met_min_medium = factory.Faker("pyint")
     met_min_high = factory.Faker("pyint")
-    average_met = factory.Faker("pyfloat")
+    average_met = factory.Faker("pydecimal")
     class_5min = factory.LazyFunction(
         lambda: "".join([fake.numerify(text="?") for _ in range(0, 50)])
     )
-    met_1min = factory.List([factory.Faker("pyfloat") for _ in range(0, 50)])
+    met_1min = factory.List([factory.Faker("pydecimal") for _ in range(0, 50)])
     rest_mode_state = fuzzy.FuzzyChoice([_ for _ in RestMode])
 
 

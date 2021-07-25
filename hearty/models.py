@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Optional, List
 
 from pydantic import BaseModel, EmailStr
@@ -14,8 +15,8 @@ class Patient(BaseModel):
 class BaseTimeSeries(BaseModel):
     start_epoch_seconds: int
     end_epoch_seconds: int
-    mean: Optional[float]
-    standard_deviation: Optional[float]
+    mean: Optional[Decimal]
+    standard_deviation: Optional[Decimal]
     sample_count: Optional[int]
 
 
@@ -29,11 +30,11 @@ class IntegerTimeSeriesBatch(BaseModel):
     batch: List[IntegerTimeSeries]
 
 
-class FloatTimeSeries(BaseTimeSeries):
-    max: Optional[float]
-    median: Optional[float]
-    min: Optional[float]
+class DecimalTimeSeries(BaseTimeSeries):
+    max: Optional[Decimal]
+    median: Optional[Decimal]
+    min: Optional[Decimal]
 
 
-class FloatTimeSeriesBatch(BaseModel):
-    batch: List[FloatTimeSeries]
+class DecimalTimeSeriesBatch(BaseModel):
+    batch: List[DecimalTimeSeries]

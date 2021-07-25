@@ -231,12 +231,12 @@ resources:
           - AttributeName: user_id
             AttributeType: S
           - AttributeName: start_epoch_seconds
-            AttributeType: S
+            AttributeType: N
         KeySchema:
           - AttributeName: user_id
             KeyType: HASH
           - AttributeName: start_epoch_seconds
-            KeyType: N
+            KeyType: RANGE
     healthKitStepsTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -248,12 +248,12 @@ resources:
           - AttributeName: user_id
             AttributeType: S
           - AttributeName: start_epoch_seconds
-            AttributeType: S
+            AttributeType: N
         KeySchema:
           - AttributeName: user_id
             KeyType: HASH
           - AttributeName: start_epoch_seconds
-            KeyType: N
+            KeyType: RANGE
 
 functions:
   echo:

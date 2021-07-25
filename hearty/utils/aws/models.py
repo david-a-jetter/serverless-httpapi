@@ -5,7 +5,7 @@ from pydantic import BaseModel
 class Jwt(BaseModel):
     # https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
     claims: Dict[str, str] = {}
-    scopes: Dict[str, str] = {}
+    scopes: Optional[Dict[str, str]]
 
     @property
     def sub(self) -> str:

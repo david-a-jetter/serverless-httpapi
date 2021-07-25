@@ -28,7 +28,9 @@ provider:
           Action:
             - dynamodb:PutItem
             - dynamodb:GetItem
-          Resource: arn:aws:dynamodb:${self:custom.common.provider.region}:*:table/${self:custom.common.custom.appEnv}
+            - dynamodb:BatchWriteItem
+            - dynamodb:Query
+          Resource: arn:aws:dynamodb:${self:custom.common.provider.region}:*:table/${self:custom.common.custom.appEnv}*
 
 functions:
   oura-authorize-user:
