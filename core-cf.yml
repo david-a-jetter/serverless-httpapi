@@ -1,0 +1,156 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Shared objects across Hearty apps
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - production
+    Description: Enter dev, staging, or production. Default is dev.
+Resources:
+  ## App-wide tables ##
+  secretsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Join [ '-', [ 'hearty', !Ref Environment, 'secrets' ] ]
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: app_name
+          AttributeType: S
+      KeySchema:
+        - AttributeName: app_name
+          KeyType: HASH
+  ## Oura Data tables ##
+  ouraUserAuthTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Join [ '-', [ 'hearty', !Ref Environment, 'OuraUserAuth' ] ]
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: user_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: user_id
+          KeyType: HASH
+  ouraUserInfoTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Join [ '-', [ 'hearty', !Ref Environment, 'OuraUserInfo' ] ]
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: user_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: user_id
+          KeyType: HASH
+  ouraReadinessTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Join [ '-', [ 'hearty', !Ref Environment, 'OuraReadiness' ] ]
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: summary_date
+          AttributeType: S
+      KeySchema:
+        - AttributeName: user_id
+          KeyType: HASH
+        - AttributeName: summary_date
+          KeyType: RANGE
+  ouraSleepTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Join [ '-', [ 'hearty', !Ref Environment, 'OuraSleep' ] ]
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: summary_date
+          AttributeType: S
+      KeySchema:
+        - AttributeName: user_id
+          KeyType: HASH
+        - AttributeName: summary_date
+          KeyType: RANGE
+  ouraActivityTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Join [ '-', [ 'hearty', !Ref Environment, 'OuraActivity' ] ]
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: summary_date
+          AttributeType: S
+      KeySchema:
+        - AttributeName: user_id
+          KeyType: HASH
+        - AttributeName: summary_date
+          KeyType: RANGE
+  ouraBedtimeTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Join [ '-', [ 'hearty', !Ref Environment, 'OuraBedtime' ] ]
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: date
+          AttributeType: S
+      KeySchema:
+        - AttributeName: user_id
+          KeyType: HASH
+        - AttributeName: date
+          KeyType: RANGE
+  ## Apple HealthKit Tables ##
+  healthKitHeartRateTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Join [ '-', [ 'hearty', !Ref Environment, 'HealthKitHeartRate' ] ]
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: start_epoch_seconds
+          AttributeType: N
+      KeySchema:
+        - AttributeName: user_id
+          KeyType: HASH
+        - AttributeName: start_epoch_seconds
+          KeyType: RANGE
+  healthKitStepsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Join [ '-', [ 'hearty', !Ref Environment, 'healthKitSteps' ] ]
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: start_epoch_seconds
+          AttributeType: N
+      KeySchema:
+        - AttributeName: user_id
+          KeyType: HASH
+        - AttributeName: start_epoch_seconds
+          KeyType: RANGE

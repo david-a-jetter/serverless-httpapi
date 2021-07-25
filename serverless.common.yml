@@ -24,13 +24,6 @@ package:
 custom:
   appEnv: hearty-${opt:stage}
 
-infra:
-  dev:
-    httpApi:
-      id: cktzfxeaie
-      authorizers:
-        clientAuthorizer: xmvpyh
-
 provider:
   name: aws
   runtime: python3.8

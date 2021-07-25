@@ -46,6 +46,7 @@ class HttpApiRequest(BaseModel):
     queryStringParameters: Optional[Dict[str, str]]
     requestContext: RequestContext
     body: str = ""
+    pathParameters: Dict[str, str] = {}
     isBase64Encoded: bool
 
     @property

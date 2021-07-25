@@ -75,4 +75,4 @@ class IntegerTimeSeriesBatchFactory(factory.Factory):
     class Meta:
         model = IntegerTimeSeriesBatch
 
-    batch = factory.List([factory.SubFactory(IntegerTimeSeriesFactory) for _ in range(10)])
+    batch = factory.List([factory.SubFactory(IntegerTimeSeriesFactory) for _ in range(12)])

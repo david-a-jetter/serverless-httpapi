@@ -1,0 +1,20 @@
+healthkit-get-heartrates:
+  summary: "Retrieve a batch of heart rate time series data"
+  description: "Returns a batch a user's heart rate time series data. Data is keyed by the user_id"
+  tags:
+    - healthkit
+  pathParams:
+    - name: userId
+      description: "The user ID of the patient for which to retrieve heart rates"
+      schema:
+        type: "string"
+  methodResponses:
+    - statusCode: 200
+      responseModels:
+        application/json: "IntegerTimeSeriesBatch"
+    - statusCode: 400
+      responseModels:
+        application/json: "ApiError"
+    - statusCode: 500
+      responseModels:
+        application/json: "ApiError"

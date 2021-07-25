@@ -1,4 +1,4 @@
-service: ${self:custom.common.service}-client
+service: ${self:custom.common.service}-admin
 configValidationMode: ${self:custom.common.configValidationMode}
 
 plugins: ${self:custom.common.plugins}
@@ -7,8 +7,7 @@ custom:
   common: ${file(serverless.common.yml)}
   pythonRequirements: ${self:custom.common.pythonRequirements}
   prune: ${self:custom.common.prune}
-  infra: ${self:custom.common.infra.${opt:stage}}
-  doc_directory: "doc/api/client"
+  doc_directory: "doc/api/admin"
   documentation: ${file(${self:custom.doc_directory}/documentation.yml):documentation}
 
 package: ${self:custom.common.package}
@@ -21,7 +20,7 @@ provider:
   timeout: ${self:custom.common.provider.timeout}
   httpApi:
     authorizers:
-      heartyUserPoolAuthorizer:
+      heartyAdminPoolAuthorizer:
         identitySource: $request.header.Authorization
         issuerUrl:
           Fn::Join:
@@ -29,23 +28,22 @@ provider:
             - - 'https://cognito-idp.'
               - '${opt:region, self:provider.region}'
               - '.amazonaws.com/'
-              - Ref: heartyUserPool
+              - Ref: heartyAdminPool
         audience:
-          - Ref: heartyUserPoolClient
+          - Ref: heartyAdminPoolClient
   iam:
     role:
       statements:
         - Effect: Allow
           Action:
-            - dynamodb:BatchWriteItem
+            - dynamodb:Query
           Resource: arn:aws:dynamodb:${self:custom.common.provider.region}:*:table/${self:custom.common.custom.appEnv}*
 
 resources:
   Resources:
     HttpApi:
-      DependsOn: heartyUserPool
-    ## Patient User Cognito Objects ##
-    heartyUserPool:
+      DependsOn: heartyAdminPool
+    heartyAdminPool:
       Type: AWS::Cognito::UserPool
       Properties:
         AccountRecoverySetting:
@@ -73,14 +71,13 @@ resources:
           CaseSensitive: true
         UserPoolAddOns:
           AdvancedSecurityMode: ENFORCED
-        UserPoolName: ${self:custom.common.custom.appEnv}-user-pool
-    heartyUserPoolClient:
+        UserPoolName: ${self:custom.common.custom.appEnv}-admin-pool
+    heartyAdminPoolClient:
       Type: AWS::Cognito::UserPoolClient
       Properties:
-        ClientName: ${self:custom.common.custom.appEnv}-user-app
+        ClientName: ${self:custom.common.custom.appEnv}-admin-app
         AllowedOAuthFlows:
           - code
-          - implicit
         AllowedOAuthFlowsUserPoolClient: true
         AllowedOAuthScopes:
           - phone
@@ -89,7 +86,7 @@ resources:
           - profile
           - aws.cognito.signin.user.admin
         UserPoolId:
-          Ref: heartyUserPool
+          Ref: heartyAdminPool
         CallbackURLs:
           - https://localhost:3000
         ExplicitAuthFlows:
@@ -98,34 +95,26 @@ resources:
         GenerateSecret: false
         SupportedIdentityProviders:
           - COGNITO
-    heartyeUserPoolDomain:
+    heartyeAdminPoolDomain:
       Type: AWS::Cognito::UserPoolDomain
       Properties:
         UserPoolId:
-          Ref: heartyUserPool
-        Domain: ${self:custom.common.custom.appEnv}
+          Ref: heartyAdminPool
+        Domain: ${self:custom.common.custom.appEnv}-admin
 
 functions:
   echo:
     handler: hearty.api.lambdas.echo.echo
     events:
       - httpApi:
-          authorizer: heartyUserPoolAuthorizer
+          authorizer: heartyAdminPoolAuthorizer
           path: /echo
           method: post
-  oura-authorize-user:
-    handler: hearty.api.client.lambdas.oura.authorize_user
+  healthkit-get-heartrates:
+    handler: hearty.api.admin.lambdas.healthkit.get_heart_rates
     events:
       - httpApi:
-          authorizer: heartyUserPoolAuthorizer
-          path: /client/oura/authorize-user
-          method: post
-          documentation: ${file(${self:custom.doc_directory}/endpoints.yml):oura-authorize-user}
-  healthkit-save-heartrates:
-    handler: hearty.api.client.lambdas.healthkit.save_heart_rates
-    events:
-      - httpApi:
-          authorizer: heartyUserPoolAuthorizer
-          path: /client/healthkit/heart-rates
-          method: post
-          documentation: ${file(${self:custom.doc_directory}/endpoints.yml):healthkit-save-heartrates}
+          authorizer: heartyAdminPoolAuthorizer
+          path: /client/healthkit/heart-rates/{userId}
+          method: get
+          documentation: ${file(${self:custom.doc_directory}/endpoints.yml):healthkit-get-heartrates}
