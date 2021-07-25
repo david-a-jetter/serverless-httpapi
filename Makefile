@@ -18,8 +18,8 @@ check:
 	make test
 	poetry run black --check hearty
 	poetry run black --check tests
-	npx sls print --stage dev
 	npx sls print --config serverless.client.yml --stage dev
+	npx sls print --config serverless.admin.yml --stage dev
 
 new-environment:
 	aws cloudformation validate-template --template-body file://core-cf.yml
