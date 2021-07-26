@@ -119,7 +119,7 @@ functions:
     events:
       - httpApi:
           authorizer: heartyUserPoolAuthorizer
-          path: /client/oura/authorize-user
+          path: /oura/authorize-user
           method: post
           documentation: ${file(${self:custom.doc_directory}/endpoints.yml):oura-authorize-user}
   healthkit-save-heartrates:
@@ -127,6 +127,6 @@ functions:
     events:
       - httpApi:
           authorizer: heartyUserPoolAuthorizer
-          path: /client/healthkit/heart-rates
+          path: /healthkit/heart-rates
           method: post
           documentation: ${file(${self:custom.doc_directory}/endpoints.yml):healthkit-save-heartrates}

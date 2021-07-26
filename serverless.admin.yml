@@ -116,6 +116,6 @@ functions:
     events:
       - httpApi:
           authorizer: heartyAdminPoolAuthorizer
-          path: /client/healthkit/heart-rates/{userId}
+          path: /healthkit/heart-rates/{userId}
           method: get
           documentation: ${file(${self:custom.doc_directory}/endpoints.yml):healthkit-get-heartrates}
