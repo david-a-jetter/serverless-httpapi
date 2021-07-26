@@ -135,6 +135,7 @@ class UpdateItemArguments(BaseModel):
     attribute_values: Dict[str, str]
 
 
+# TODO: Add tests to this if/when it starts being used
 def build_update_item_arguments(item: Dict[str, str]) -> UpdateItemArguments:
     update_expression = StringIO()
     names = {}
