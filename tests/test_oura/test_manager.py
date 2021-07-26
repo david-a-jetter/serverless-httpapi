@@ -4,7 +4,11 @@ from faker import Faker
 
 from hearty.oura.manager import OuraUserAuthManager, OuraDataManager
 from hearty.oura.models import OuraUserAuth, PersonalInfo
-from tests.test_oura.factories import OuraAuthCodeRequestFactory, OuraUserAuthFactory
+from tests.test_oura.factories import (
+    OuraAuthCodeRequestFactory,
+    OuraUserAuthFactory,
+    PersonalInfoFactory,
+)
 
 fake = Faker()
 
@@ -98,7 +102,7 @@ def test_auth_manager_get_user_auth():
 @patch("hearty.oura.manager.OuraUserAuthManager.build")
 @patch("hearty.oura.manager.DynamoHashKeyedRepository.build")
 @patch("hearty.oura.manager.OuraApiAccess.build")
-def test_auth_manager_build(api_build, db_build, auth_build):
+def test_data_manager_build(api_build, db_build, auth_build):
     pi_db = MagicMock()
     db_build.return_value = pi_db
     auth = MagicMock()
@@ -121,5 +125,36 @@ def test_auth_manager_build(api_build, db_build, auth_build):
     assert pi_kwargs["environment"] == environment
     assert pi_kwargs["table_name"] == "OuraUserInfo"
 
+    assert manager._user_id == user_id
     assert manager._api == api
     assert manager._user_info == pi_db
+
+
+@patch("hearty.oura.manager.OuraUserAuthManager.build")
+def test_data_manager_build_existing_auth_none(auth_build):
+
+    auth = MagicMock()
+    auth.get_user_auth.return_value = None
+    auth_build.return_value = auth
+    user_id = fake.bs()
+
+    try:
+        OuraDataManager.build(fake.bs(), user_id)
+    except Exception as ex:
+        assert isinstance(ex, ValueError)
+        assert user_id in str(ex)
+
+
+def test_data_manager_fetch_personal_data():
+    api = MagicMock()
+    personal_info = PersonalInfoFactory()
+    api.get_personal_info.return_value = personal_info
+    pi_db = MagicMock()
+    user_id = fake.bs()
+    manager = OuraDataManager(user_id, api, pi_db)
+
+    manager.fetch_personal_info()
+
+    args, kwargs = pi_db.save_item.call_args
+    assert args[0] == user_id
+    assert args[1] == personal_info

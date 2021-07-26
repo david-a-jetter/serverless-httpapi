@@ -19,6 +19,7 @@ check: test
 	poetry run flake8 tests
 	poetry run black --check hearty
 	poetry run black --check tests
+	aws cloudformation validate-template --template-body $(coreTemplate)
 	npx sls print --config serverless.client.yml --stage dev
 	npx sls print --config serverless.admin.yml --stage dev
 

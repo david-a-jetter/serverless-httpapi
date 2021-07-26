@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import Optional
-from hearty.models import Patient
 from hearty.oura.api_access import OuraApiAccess, OuraUserAuthorizer, OuraUserAuth, PersonalInfo
 from hearty.oura.constants import USER_AUTH_TABLE_SUFFIX, USER_INFO_TABLE_SUFFIX
 from hearty.api.client.models import OuraAuthCodeRequest
@@ -59,15 +58,15 @@ class OuraDataManager:
             table_name=USER_INFO_TABLE_SUFFIX,
         )
 
-        return cls(api, storage)
+        return cls(user_id, api, storage)
 
-    def __init__(self, api: OuraApiAccess, user_info: HashKeyedRepository[PersonalInfo]) -> None:
+    def __init__(
+        self, user_id: str, api: OuraApiAccess, user_info: HashKeyedRepository[PersonalInfo]
+    ) -> None:
+        self._user_id = user_id
         self._api = api
         self._user_info = user_info
 
-    def fetch_personal_info(
-        self,
-        patient: Patient,
-    ) -> None:
+    def fetch_personal_info(self) -> None:
         personal_info = self._api.get_personal_info()
-        self._user_info.save_item(patient.id, personal_info)
+        self._user_info.save_item(self._user_id, personal_info)
