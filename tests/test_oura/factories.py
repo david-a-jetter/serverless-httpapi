@@ -23,7 +23,7 @@ from hearty.oura.models import (
 fake = Faker()
 
 
-class AuthCodeRequestFactory(factory.Factory):
+class OuraAuthCodeRequestFactory(factory.Factory):
     class Meta:
         model = OuraAuthCodeRequest
 

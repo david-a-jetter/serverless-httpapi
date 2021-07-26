@@ -46,7 +46,7 @@ class OuraDataManager:
     @classmethod
     def build(cls, environment: str, user_id: str) -> OuraDataManager:
 
-        user_auth_repo = OuraUserAuthManager.build(environment=environment)
+        user_auth_repo = OuraUserAuthManager.build(environment)
         user_auth = user_auth_repo.get_user_auth(user_id)
 
         if user_auth is None:

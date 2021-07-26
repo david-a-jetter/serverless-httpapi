@@ -8,7 +8,7 @@ from hearty.oura.api_access import OuraUserAuthorizer, OuraApiAccess
 from tests.factories import CredentialFactory
 from tests.test_oura.factories import (
     OuraUserAuthFactory,
-    AuthCodeRequestFactory,
+    OuraAuthCodeRequestFactory,
     PersonalInfoFactory,
     SleepSummaryFactory,
     ActivityResponseFactory,
@@ -66,7 +66,7 @@ def test_authorize_user():
     response_obj = OuraUserAuthFactory()
     response.text = response_obj.json()
     session.post.return_value = response
-    auth_request = AuthCodeRequestFactory()
+    auth_request = OuraAuthCodeRequestFactory()
 
     user_auth = authorizer.authorize_user(auth_request)
     assert user_auth == response_obj
@@ -88,7 +88,7 @@ def test_authorize_user_null_redirect():
     response_obj = OuraUserAuthFactory()
     response.text = response_obj.json()
     session.post.return_value = response
-    auth_request = AuthCodeRequestFactory(redirect_uri=None)
+    auth_request = OuraAuthCodeRequestFactory(redirect_uri=None)
 
     user_auth = authorizer.authorize_user(auth_request)
     assert user_auth == response_obj
@@ -109,7 +109,7 @@ def test_authorize_user_error():
     response = MagicMock()
     response.ok = False
     session.post.return_value = response
-    auth_request = AuthCodeRequestFactory()
+    auth_request = OuraAuthCodeRequestFactory()
 
     with pytest.raises(HTTPError):
         authorizer.authorize_user(auth_request)

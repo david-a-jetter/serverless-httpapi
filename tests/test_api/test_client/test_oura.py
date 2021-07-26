@@ -4,7 +4,7 @@ from faker import Faker
 
 from hearty.api.client.lambdas.oura import authorize_user
 from tests.factories import HttpApiRequestFactory
-from tests.test_oura.factories import AuthCodeRequestFactory
+from tests.test_oura.factories import OuraAuthCodeRequestFactory
 
 
 fake = Faker()
@@ -15,7 +15,7 @@ def test_authorize_user(auth_mgr):
     manager = MagicMock()
     auth_mgr.build.return_value = manager
 
-    auth_request = AuthCodeRequestFactory()
+    auth_request = OuraAuthCodeRequestFactory()
     http_request = HttpApiRequestFactory(body=auth_request.json())
 
     authorize_user(http_request.dict(), MagicMock())
