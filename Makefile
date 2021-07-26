@@ -1,4 +1,6 @@
 stage=dev
+coreTemplate=file://core-cf.yml
+stackPolicy=file://cf/stack-policy.json
 
 build:
 	poetry install
@@ -11,23 +13,28 @@ black:
 test:
 	poetry run python -m pytest --cov=hearty tests
 
-check:
+check: test
 	poetry run mypy hearty tests
 	poetry run flake8 hearty
 	poetry run flake8 tests
-	make test
 	poetry run black --check hearty
 	poetry run black --check tests
 	npx sls print --config serverless.client.yml --stage dev
 	npx sls print --config serverless.admin.yml --stage dev
 
-new-environment:
-	aws cloudformation validate-template --template-body file://core-cf.yml
-	aws cloudformation create-stack --stack-name hearty-core-$(stage) --template-body file://core-cf.yml --parameters ParameterKey=Environment,ParameterValue=$(stage)
+set-core-stack-policy:
+	aws cloudformation set-stack-policy --stack-name hearty-core-$(stage) --stack-policy-body $(stackPolicy)
 
-deploy-core:
-	aws cloudformation validate-template --template-body file://core-cf.yml
-	aws cloudformation update-stack --stack-name hearty-core-$(stage) --template-body file://core-cf.yml --parameters ParameterKey=Environment,ParameterValue=$(stage)
+new-environment:
+	aws cloudformation validate-template --template-body $(coreTemplate)
+	aws cloudformation create-stack --stack-name hearty-core-$(stage) \
+--template-body $(coreTemplate) --parameters ParameterKey=Environment,ParameterValue=$(stage) \
+
+
+deploy-core: set-core-stack-policy
+	aws cloudformation validate-template --template-body $(coreTemplate)
+	aws cloudformation update-stack --stack-name hearty-core-$(stage) \
+--template-body $(coreTemplate) --parameters ParameterKey=Environment,ParameterValue=$(stage)
 
 deploy-apps:
 	npx sls deploy --config serverless.client.yml --stage $(stage)

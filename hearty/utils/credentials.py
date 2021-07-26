@@ -4,7 +4,7 @@ from hearty.utils.aws.dynamo import DynamoHashKeyedRepository
 from hearty.utils.storage import HashKeyedRepository
 
 TABLE_KEY_ATTRIBUTE = "app_name"
-TABLE_NAME_SUFFIX = "secrets"
+TABLE_NAME_SUFFIX = "Secrets"
 
 
 class Credential(BaseModel):

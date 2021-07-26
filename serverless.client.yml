@@ -19,6 +19,7 @@ provider:
   memorySize: ${self:custom.common.provider.memorySize}
   region: ${self:custom.common.provider.region}
   timeout: ${self:custom.common.provider.timeout}
+  stackPolicy: ${self:custom.common.provider.stackPolicy}
   httpApi:
     authorizers:
       heartyUserPoolAuthorizer:

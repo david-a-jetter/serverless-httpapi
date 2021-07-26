@@ -1,0 +1,29 @@
+{
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "Update:*",
+            "Principal": "*",
+            "Resource": "*"
+        },
+        {
+            "Effect": "Deny",
+            "Action": [
+                "Update:Replace",
+                "Update:Delete"
+            ],
+            "Principal": "*",
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "ResourceType": [
+                        "AWS::DynamoDB::Table",
+                        "AWS::Cognito::UserPool",
+                        "AWS::Cognito::UserPoolClient",
+                        "AWS::Cognito::UserPoolDomain"
+                    ]
+                }
+            }
+        }
+    ]
+}

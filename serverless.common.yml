@@ -30,3 +30,21 @@ provider:
   memorySize: 128
   region: us-east-1
   timeout: 10
+  stackPolicy:
+    - Effect: Allow
+      Principal: '*'
+      Action: 'Update:*'
+      Resource: '*'
+    - Effect: Deny
+      Principal: '*'
+      Resource: '*'
+      Action:
+        - Update:Replace
+        - Update:Delete
+      Condition:
+        StringEquals:
+          ResourceType:
+            - AWS::DynamoDB::Table
+            - AWS::Cognito::UserPool
+            - AWS::Cognito::UserPoolClient
+            - AWS::Cognito::UserPoolDomain
