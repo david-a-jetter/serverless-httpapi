@@ -21,4 +21,4 @@ def test_build_credentials_repo(boto3):
     assert repo._table == table
 
     args, kwargs = resource.Table.call_args
-    assert args[0] == f"{environment}-secrets"
+    assert args[0] == f"{environment}-Secrets"
