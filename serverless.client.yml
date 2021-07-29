@@ -7,7 +7,6 @@ custom:
   common: ${file(serverless.common.yml)}
   pythonRequirements: ${self:custom.common.pythonRequirements}
   prune: ${self:custom.common.prune}
-  infra: ${self:custom.common.infra.${opt:stage}}
   doc_directory: "doc/api/client"
   documentation: ${file(${self:custom.doc_directory}/documentation.yml):documentation}
 
@@ -20,6 +19,7 @@ provider:
   region: ${self:custom.common.provider.region}
   timeout: ${self:custom.common.provider.timeout}
   stackPolicy: ${self:custom.common.provider.stackPolicy}
+  lambdaHashingVersion: ${self:custom.common.provider.lambdaHashingVersion}
   httpApi:
     authorizers:
       heartyUserPoolAuthorizer:
@@ -44,6 +44,7 @@ provider:
 resources:
   Resources:
     HttpApi:
+      Type: AWS::ApiGatewayV2::Api
       DependsOn: heartyUserPool
     ## Patient User Cognito Objects ##
     heartyUserPool:
