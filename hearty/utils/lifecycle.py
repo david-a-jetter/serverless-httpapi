@@ -66,7 +66,7 @@ class HttpLifecycle(ContextDecorator):
         def wrapped_f(event: Dict, context) -> Dict:
             log_ctx = {
                 "function_name": context.function_name,
-                "request_id": context.request_id,
+                "request_id": context.aws_request_id,
                 "stage": get_stage(),
             }
             update_context(**log_ctx)
