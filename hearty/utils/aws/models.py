@@ -1,10 +1,11 @@
+from http import HTTPStatus
 from typing import List, Dict, Optional
 from pydantic import BaseModel
 
 
 class Jwt(BaseModel):
     # https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
-    claims: Dict[str, str] = {}
+    claims: Dict[str, str]
     scopes: Optional[Dict[str, str]]
 
     @property
@@ -17,7 +18,7 @@ class Jwt(BaseModel):
 
 
 class Authorizer(BaseModel):
-    jwt: Optional[Jwt]
+    jwt: Jwt
 
 
 class RequestContext(BaseModel):
@@ -43,9 +44,8 @@ class HttpApiRequest(BaseModel):
     rawQueryString: Optional[str]
     cookies: Optional[List[str]]
     headers: Dict[str, str]
-    queryStringParameters: Optional[Dict[str, str]]
+    queryStringParameters: Dict[str, str] = {}
     requestContext: RequestContext
-    body: str = ""
     pathParameters: Dict[str, str] = {}
     isBase64Encoded: bool
 
@@ -54,16 +54,16 @@ class HttpApiRequest(BaseModel):
         authorizer = self.requestContext.authorizer
         if authorizer is None:
             raise ValueError("No authorizer on this request")
-        jwt = authorizer.jwt
-        if jwt is None:
-            raise ValueError("jwt not used for this authorizer")
-        else:
-            return jwt
+        return authorizer.jwt
+
+
+class HttpApiPostRequest(HttpApiRequest):
+    body: str
 
 
 class HttpApiResponse(BaseModel):
     cookies: Optional[List[str]]
     isBase64Encoded: bool = False
-    statusCode: int = 200
-    headers: Optional[Dict[str, str]] = {"content-type": "application/json"}
+    statusCode: int = HTTPStatus.OK.value
+    headers: Dict[str, str] = {"content-type": "application/json"}
     body: Optional[str]

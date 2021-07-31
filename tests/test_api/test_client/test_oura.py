@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 from faker import Faker
 
 from hearty.api.client.lambdas.oura import authorize_user
-from tests.factories import HttpApiRequestFactory
+from tests.factories import HttpApiPostRequestFactory
 from tests.test_oura.factories import OuraAuthCodeRequestFactory
 
 
@@ -16,7 +16,7 @@ def test_authorize_user(auth_mgr):
     auth_mgr.build.return_value = manager
 
     auth_request = OuraAuthCodeRequestFactory()
-    http_request = HttpApiRequestFactory(body=auth_request.json())
+    http_request = HttpApiPostRequestFactory(body=auth_request.json())
 
     authorize_user(http_request.dict(), MagicMock())
 
@@ -28,7 +28,7 @@ def test_authorize_user(auth_mgr):
 
 def test_authorize_user_no_username():
 
-    http_request = HttpApiRequestFactory()
+    http_request = HttpApiPostRequestFactory()
     del http_request.requestContext.authorizer.jwt.claims["username"]
 
     try:

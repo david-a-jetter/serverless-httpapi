@@ -2,7 +2,13 @@ import factory
 from factory import fuzzy
 
 from hearty.models import IntegerTimeSeries, IntegerTimeSeriesBatch
-from hearty.utils.aws.models import HttpApiRequest, RequestContext, Authorizer, Jwt
+from hearty.utils.aws.models import (
+    HttpApiRequest,
+    RequestContext,
+    Authorizer,
+    Jwt,
+    HttpApiPostRequest,
+)
 from hearty.utils.credentials import Credential
 
 
@@ -47,6 +53,13 @@ class HttpApiRequestFactory(factory.Factory):
     headers = factory.Dict({})
     requestContext = factory.SubFactory(RequestContextFactory)
     isBase64Encoded = fuzzy.FuzzyChoice([True, False])
+
+
+class HttpApiPostRequestFactory(HttpApiRequestFactory):
+    class Meta:
+        model = HttpApiPostRequest
+
+    body = factory.Faker("bs")
 
 
 class CredentialFactory(factory.Factory):
