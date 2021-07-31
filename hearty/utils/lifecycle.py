@@ -2,7 +2,7 @@ import logging
 from threading import local
 from functools import wraps
 from http import HTTPStatus
-from typing import Dict, Iterable
+from typing import Dict, Iterable, OrderedDict
 
 from pydantic import BaseModel
 from pythonjsonlogger import jsonlogger
@@ -10,7 +10,7 @@ from contextlib import ContextDecorator
 
 from hearty.api.models import ApiError, ApiResponse
 from hearty.utils.aws.models import HttpApiResponse
-
+from hearty.utils.environment import get_stage
 
 logger = logging.getLogger(__name__)
 log_context_data = local()
@@ -28,13 +28,19 @@ def remove_context(keys: Iterable[str]) -> None:
 
 
 class ThreadingLocalContextFilter(logging.Filter):
-    def __init__(self):
-        super().__init__()
-
-    def filter(self, record):
+    def filter(self, record: logging.LogRecord):
         for k, v in log_context_data.__dict__.items():
             setattr(record, k, v)
         return True
+
+
+class CustomJsonFormatter(jsonlogger.JsonFormatter):
+    def add_fields(self, log_record: OrderedDict, record: logging.LogRecord, message_dict: Dict):
+        super(CustomJsonFormatter, self).add_fields(log_record, record, message_dict)
+
+        log_record["level"] = record.levelname
+        log_record["logger_name"] = record.name
+        log_record["func_name"] = record.funcName
 
 
 def _configure_logging() -> None:
@@ -44,7 +50,7 @@ def _configure_logging() -> None:
     root_logger.setLevel(logging.INFO)
     handler = logging.StreamHandler()
     handler.addFilter(ThreadingLocalContextFilter())
-    handler.setFormatter(jsonlogger.JsonFormatter())
+    handler.setFormatter(CustomJsonFormatter())
     root_logger.addHandler(handler)
 
 
@@ -58,7 +64,11 @@ class HttpLifecycle(ContextDecorator):
     def __call__(self, func):
         @wraps(func)
         def wrapped_f(event: Dict, context) -> Dict:
-            log_ctx = {"function_name": context.function_name}
+            log_ctx = {
+                "function_name": context.function_name,
+                "request_id": context.request_id,
+                "stage": get_stage(),
+            }
             update_context(**log_ctx)
             logger.info("Event received")
             try:
