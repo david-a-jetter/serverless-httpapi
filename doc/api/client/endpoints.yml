@@ -22,7 +22,26 @@ healthkit-save-heartrates:
   tags:
     - healthkit
   requestBody:
-    description: "Batch of time series data for heart rate data"
+    description: "Batch of time series data data"
+  requestModels:
+    application/json: "IntegerTimeSeriesBatch"
+  methodResponses:
+    - statusCode: 200
+      responseModels: []
+    - statusCode: 400
+      responseModels:
+        application/json: "ApiError"
+    - statusCode: 500
+      responseModels:
+        application/json: "ApiError"
+healthkit-save-steps:
+  summary: "Save a batch of steps time series data"
+  description: "Persists a batch a user's steps time series data. Data is keyed by the user_id and
+  start_epoch_seconds"
+  tags:
+    - healthkit
+  requestBody:
+    description: "Batch of time series data"
   requestModels:
     application/json: "IntegerTimeSeriesBatch"
   methodResponses:

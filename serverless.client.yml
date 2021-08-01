@@ -131,3 +131,11 @@ functions:
           path: /healthkit/heart-rates
           method: post
           documentation: ${file(${self:custom.doc_directory}/endpoints.yml):healthkit-save-heartrates}
+  healthkit-save-steps:
+    handler: hearty.api.client.lambdas.healthkit.save_steps
+    events:
+      - httpApi:
+          authorizer: heartyUserPoolAuthorizer
+          path: /healthkit/steps
+          method: post
+          documentation: ${file(${self:custom.doc_directory}/endpoints.yml):healthkit-save-steps}

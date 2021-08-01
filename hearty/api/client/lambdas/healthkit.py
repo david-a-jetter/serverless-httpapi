@@ -16,3 +16,14 @@ def save_heart_rates(event: Dict, context) -> None:
 
     manager = HealthKitManager.build(get_app_environment())
     manager.save_heart_rates(username, heart_rates.batch)
+
+
+@HttpLifecycle()
+def save_steps(event: Dict, context) -> None:
+
+    http_request = HttpApiPostRequest(**event)
+    username = http_request.jwt.username
+    heart_rates = IntegerTimeSeriesBatch.parse_raw(http_request.body)
+
+    manager = HealthKitManager.build(get_app_environment())
+    manager.save_steps(username, heart_rates.batch)
